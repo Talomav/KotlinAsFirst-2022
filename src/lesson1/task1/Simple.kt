@@ -65,8 +65,7 @@ fun main() {
  * Пользователь задает время в часах, минутах и секундах, например, 8:20:35.
  * Рассчитать время в секундах, прошедшее с начала суток (30035 в данном случае).
  */
-fun seconds(hours: Int, minutes: Int, seconds: Int): Int = hours*3600 + minutes*60 + seconds
-val time = seconds(8,20,35)
+fun seconds(hours: Int, minutes: Int, seconds: Int): Int = (hours * 3600) + (minutes * 60) + seconds
 
 /**
  * Тривиальная (1 балл)
@@ -75,8 +74,8 @@ val time = seconds(8,20,35)
  * Определить длину того же отрезка в метрах (в данном случае 18.98).
  * 1 сажень = 3 аршина = 48 вершков, 1 вершок = 4.445 см.
  */
-fun lengthInMeters(sagenes: Int, arshins: Int, vershoks: Int): Double = (sagenes*48 + arshins*16 + vershoks)*4.445/100
-val meters = lengthInMeters(8,2,11)
+fun lengthInMeters(sagenes: Int, arshins: Int, vershoks: Int): Double =
+    (sagenes * 48 + arshins * 16 + vershoks) * 4.445 / 100
 
 /**
  * Тривиальная (1 балл)
@@ -84,8 +83,8 @@ val meters = lengthInMeters(8,2,11)
  * Пользователь задает угол в градусах, минутах и секундах (например, 36 градусов 14 минут 35 секунд).
  * Вывести значение того же угла в радианах (например, 0.63256).
  */
-fun angleInRadian(deg: Int, min: Int, sec: Int): Double = deg*PI/180 + min*PI/60/180 + sec*PI/3600/180
-val radian = angleInRadian(36,14,35)
+fun angleInRadian(deg: Int, min: Int, sec: Int): Double =
+    (deg * PI / 180) + (min * PI / 60 / 180) + (sec * PI / 3600 / 180)
 
 /**
  * Тривиальная (1 балл)
@@ -93,16 +92,17 @@ val radian = angleInRadian(36,14,35)
  * Найти длину отрезка, соединяющего точки на плоскости с координатами (x1, y1) и (x2, y2).
  * Например, расстояние между (3, 0) и (0, 4) равно 5
  */
-fun trackLength(x1: Double, y1: Double, x2: Double, y2: Double): Double = sqrt(sqr(x1-x2) + sqr(y1-y2))
-val distance = trackLength(3.0,0.0,0.0,4.0)
+fun trackLength(x1: Double, y1: Double, x2: Double, y2: Double): Double =
+    sqrt(sqr(x1 - x2) + sqr(y1 - y2))
+
 /**
  * Простая (2 балла)
  *
  * Пользователь задает целое число, больше или равно 100 (например, 3801).
  * Определить третью цифру справа в этом числе (в данном случае 8).
  */
-fun thirdDigit(number: Int): Int = (number - number%100)%1000/100
-val thirdNumber = thirdDigit(3801)
+fun thirdDigit(number: Int): Int = (number - number % 100) % 1000 / 100
+
 /**
  * Простая (2 балла)
  *
@@ -110,8 +110,8 @@ val thirdNumber = thirdDigit(3801)
  * прибыл на станцию назначения в h2 часов m2 минут того же дня (например в 13:01).
  * Определите время поезда в пути в минутах (в данном случае 216).
  */
-fun travelMinutes(hoursDepart: Int, minutesDepart: Int, hoursArrive: Int, minutesArrive: Int): Int =(hoursArrive*60 + minutesArrive) - (hoursDepart*60 + minutesDepart)
-val travelTime = travelMinutes(9,25,13,1)
+fun travelMinutes(hoursDepart: Int, minutesDepart: Int, hoursArrive: Int, minutesArrive: Int): Int =
+    (hoursArrive * 60 + minutesArrive) - (hoursDepart * 60 + minutesDepart)
 
 /**
  * Простая (2 балла)
@@ -120,8 +120,12 @@ val travelTime = travelMinutes(9,25,13,1)
  * Сколько денег будет на счету через 3 года (с учётом сложных процентов)?
  * Например, 100 рублей под 10% годовых превратятся в 133.1 рубля
  */
-fun accountInThreeYears(initial: Int, percent: Int): Double = initial * (1 + (percent+0.0)/100) * (1 + (percent+0.0)/100) * (1 + (percent+0.0)/100)
-val thirdYear = accountInThreeYears(100,10)
+fun accountInThreeYears(initial: Int, percent: Int): Double {
+    val coefficient = 1 + (percent + 0.0) / 100
+    val firstYear = initial * coefficient
+    val secondYear = firstYear * coefficient
+    return secondYear * coefficient
+}
 
 
 
@@ -131,5 +135,5 @@ val thirdYear = accountInThreeYears(100,10)
  * Пользователь задает целое трехзначное число (например, 478).
  * Необходимо вывести число, полученное из заданного перестановкой цифр в обратном порядке (например, 874).
  */
-fun numberRevert(number: Int): Int = (number%10*100) + (number%100-number%10) + ((number - number%100)/100)
-val reverse = numberRevert(478)
+fun numberRevert(number: Int): Int =
+    (number % 10 * 100) + (number % 100 - number % 10) + ((number - number % 100) / 100)

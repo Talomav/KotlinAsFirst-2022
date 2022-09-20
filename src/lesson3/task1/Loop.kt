@@ -1,7 +1,11 @@
-@file:Suppress("UNUSED_PARAMETER")
+@file:Suppress("UNUSED_PARAMETER", "UNREACHABLE_CODE")
 
 package lesson3.task1
 
+import java.lang.Double.MAX_VALUE
+import java.lang.Double.NaN
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.sqrt
 
 // Урок 3: циклы
@@ -87,14 +91,23 @@ fun fib(n: Int): Int = TODO()
  *
  * Для заданного числа n > 1 найти минимальный делитель, превышающий 1
  */
-fun minDivisor(n: Int): Int = TODO()
-
+fun minDivisor(n: Int): Int {
+    for (i in 2..n) {
+        if (n % i == 0) return i
+    }
+    return -1
+}
 /**
  * Простая (2 балла)
  *
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
-fun maxDivisor(n: Int): Int = TODO()
+fun maxDivisor(n: Int): Int {
+    for (i in n - 1 downTo 1 step 1) {
+        if (n % i == 0) return i
+    }
+    return -1
+}
 
 /**
  * Простая (2 балла)
@@ -112,7 +125,16 @@ fun maxDivisor(n: Int): Int = TODO()
  * Написать функцию, которая находит, сколько шагов требуется для
  * этого для какого-либо начального X > 0.
  */
-fun collatzSteps(x: Int): Int = TODO()
+fun collatzSteps(x: Int): Int {
+    var y = x
+    var step = 0
+    while (y > 1) {
+        step++
+        if (y % 2 == 0) y /= 2
+        else y = 3 * y + 1
+    }
+    return step
+}
 
 /**
  * Средняя (3 балла)
@@ -120,7 +142,12 @@ fun collatzSteps(x: Int): Int = TODO()
  * Для заданных чисел m и n найти наименьшее общее кратное, то есть,
  * минимальное число k, которое делится и на m и на n без остатка
  */
-fun lcm(m: Int, n: Int): Int = TODO()
+fun lcm(m: Int, n: Int): Int {
+    for (k in max(m, n)..n * m) {
+        if ((k % m == 0) and (k % n == 0)) return k
+    }
+    return -1
+}
 
 /**
  * Средняя (3 балла)
@@ -129,7 +156,14 @@ fun lcm(m: Int, n: Int): Int = TODO()
  * Взаимно простые числа не имеют общих делителей, кроме 1.
  * Например, 25 и 49 взаимно простые, а 6 и 8 -- нет.
  */
-fun isCoPrime(m: Int, n: Int): Boolean = TODO()
+fun isCoPrime(m: Int, n: Int): Boolean {
+    var flag = true
+    for (d in 2..(min(m, n))) {
+        if ((m % d == 0) and (n % d == 0)) flag = false
+    }
+    if (flag == false) return false
+    else return true
+}
 
 /**
  * Средняя (3 балла)
