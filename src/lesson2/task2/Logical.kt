@@ -26,6 +26,7 @@ fun isNumberHappy(number: Int): Boolean {
     val fourthNumber: Int = number % 10
     return ((firstNumber + secondNumber) == (thirdNumber + fourthNumber))
 }
+
 /**
  * Простая (2 балла)
  *
@@ -33,9 +34,8 @@ fun isNumberHappy(number: Int): Boolean {
  * Определить, угрожают ли они друг другу. Вернуть true, если угрожают.
  * Считать, что ферзи не могут загораживать друг друга.
  */
-fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean {
-    return ((x1 == x2) or (y1 == y2) or (abs(x2 - x1) == (abs(y2 - y1))))
-}
+fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean =
+    x1 == x2 || y1 == y2 || abs(x2 - x1) == abs(y2 - y1)
 
 /**
  * Простая (2 балла)
@@ -43,12 +43,13 @@ fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean {
  * Дан номер месяца (от 1 до 12 включительно) и год (положительный).
  * Вернуть число дней в этом месяце этого года по григорианскому календарю.
  */
-fun daysInMonth(month: Int, year: Int): Int {
-    if ((month in 1..7 step 2) or (month in 8..12 step 2)) return 31
-    if ((((year % 4 == 0) and (year % 100 == 0) and
-                (year % 400 != 0)) or (year % 4 != 0)) and (month == 2)) return 28
-    if ((month == 2) and (year % 4 == 0)) return 29
-    else return 30
+fun daysInMonth(month: Int, year: Int): Int = when {
+    month in 1..7 step 2 || month in 8..12 step 2 -> 31
+    ((year % 4 == 0 && year % 100 == 0 &&
+            year % 400 != 0) || year % 4 != 0) && month == 2 -> 28
+
+    month == 2 && year % 4 == 0 -> 29
+    else -> 30
 }
 
 /**
@@ -62,9 +63,6 @@ fun circleInside(
     x1: Double, y1: Double, r1: Double,
     x2: Double, y2: Double, r2: Double
 ): Boolean = TODO()
-/**    if ((x1 == x2) and (y1 == y2) and (r1 <= r2) return true
-}
- */
 
 /**
  * Средняя (3 балла)
@@ -76,6 +74,6 @@ fun circleInside(
  * Вернуть true, если кирпич пройдёт
  */
 fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean {
-    return (((a <= r) and (b <= s)) or ((b <= r) and (c <= s)) or ((c <= r) and (a <= s)) or
-            ((a <= s) and (b <= r)) or ((b <= s) and (c <= r)) or ((c <= s) and (a <= r)))
+    return (a <= r && b <= s) || (b <= r && c <= s) || (c <= r && a <= s) ||
+            (a <= s && b <= r) || (b <= s && c <= r) || (c <= s && a <= r)
 }

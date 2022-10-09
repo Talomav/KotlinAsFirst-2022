@@ -6,6 +6,7 @@ import java.lang.Double.MAX_VALUE
 import java.lang.Double.NaN
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.pow
 import kotlin.math.sqrt
 
 // Урок 3: циклы
@@ -76,7 +77,16 @@ fun digitCountInNumber(n: Int, m: Int): Int =
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun digitNumber(n: Int): Int = TODO()
+fun digitNumber(n: Int): Int {
+    if (n == 0) return 1
+    var count = 0
+    var number = n
+    while (number > 0) {
+        count++
+        number /= 10
+    }
+    return count
+}
 
 /**
  * Простая (2 балла)
@@ -84,7 +94,18 @@ fun digitNumber(n: Int): Int = TODO()
  * Найти число Фибоначчи из ряда 1, 1, 2, 3, 5, 8, 13, 21, ... с номером n.
  * Ряд Фибоначчи определён следующим образом: fib(1) = 1, fib(2) = 1, fib(n+2) = fib(n) + fib(n+1)
  */
-fun fib(n: Int): Int = TODO()
+fun fib(n: Int): Int {
+    if ((n == 1) || (n == 2)) return 1
+    var fib1 = 1
+    var fib2 = 1
+    var fibn = 0
+    for (i in 3..n) {
+        fibn = fib1 + fib2
+        fib1 = fib2
+        fib2 = fibn
+    }
+    return fibn
+}
 
 /**
  * Простая (2 балла)
@@ -92,21 +113,24 @@ fun fib(n: Int): Int = TODO()
  * Для заданного числа n > 1 найти минимальный делитель, превышающий 1
  */
 fun minDivisor(n: Int): Int {
-    for (i in 2..n) {
+    val rootN = sqrt(n.toDouble())
+    for (i in 2..rootN.toInt()) {
         if (n % i == 0) return i
     }
-    return -1
+    return n
 }
+
 /**
  * Простая (2 балла)
  *
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
 fun maxDivisor(n: Int): Int {
-    for (i in n - 1 downTo 1 step 1) {
-        if (n % i == 0) return i
+    val rootN = sqrt(n.toDouble())
+    for (i in 2..rootN.toInt()) {
+        if (n % i == 0) return n / i
     }
-    return -1
+    return 1
 }
 
 /**
@@ -144,7 +168,7 @@ fun collatzSteps(x: Int): Int {
  */
 fun lcm(m: Int, n: Int): Int {
     for (k in max(m, n)..n * m) {
-        if ((k % m == 0) and (k % n == 0)) return k
+        if ((k % m == 0) && (k % n == 0)) return k
     }
     return -1
 }
@@ -159,10 +183,9 @@ fun lcm(m: Int, n: Int): Int {
 fun isCoPrime(m: Int, n: Int): Boolean {
     var flag = true
     for (d in 2..(min(m, n))) {
-        if ((m % d == 0) and (n % d == 0)) flag = false
+        if ((m % d == 0) && (n % d == 0)) flag = false
     }
-    if (flag == false) return false
-    else return true
+    return flag
 }
 
 /**
@@ -172,7 +195,16 @@ fun isCoPrime(m: Int, n: Int): Boolean {
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun revert(n: Int): Int = TODO()
+fun revert(n: Int): Int {
+    var number = n
+    var reverse = 0
+    while (number > 0) {
+        val lastNumber = number % 10
+        reverse = reverse * 10 + lastNumber
+        number /= 10
+    }
+    return reverse
+}
 
 /**
  * Средняя (3 балла)
@@ -183,7 +215,18 @@ fun revert(n: Int): Int = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun isPalindrome(n: Int): Boolean = TODO()
+fun isPalindrome(n: Int): Boolean {
+    if (n < 10) return true
+    var number = n
+    var reverse = revert(n)
+    while (number > 0) {
+        if (number % 10 != reverse % 10) return false
+        number /= 10
+        reverse /= 10
+
+    }
+    return true
+}
 
 /**
  * Средняя (3 балла)
@@ -193,7 +236,20 @@ fun isPalindrome(n: Int): Boolean = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun hasDifferentDigits(n: Int): Boolean = TODO()
+fun hasDifferentDigits(n: Int): Boolean {
+    if (n < 10) return false
+    var number = n
+    while (number > 0) {
+        val lastNumber = number % 10
+        number /= 10
+        var number2 = number
+        while (number2 > 0) {
+            if (number2 % 10 != lastNumber) return true
+            number2 /= 10
+        }
+    }
+    return false
+}
 
 /**
  * Средняя (4 балла)
@@ -237,4 +293,31 @@ fun squareSequenceDigit(n: Int): Int = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun fibSequenceDigit(n: Int): Int = TODO()
+fun fibSequenceDigit(n: Int): Int {
+    var number = n
+    var fibSequence: Long = 1
+    if (n <= 19) for (index in 2..12) {
+        for (i in 0 until digitNumber(fib(index))) fibSequence *= 10
+        fibSequence += fib(index)
+    }
+    else {
+        number -= 19
+        for (index in 13..17) {
+            fibSequence -= 1
+            for (i in 0 until digitNumber(fib(index))) fibSequence *= 10
+            fibSequence += fib(index)
+        }
+    }
+    var reverse: Long = 0
+    while (fibSequence > 0) {
+        val lastNumber = fibSequence % 10
+        reverse = reverse * 10 + lastNumber
+        fibSequence /= 10
+    }
+    var lastNumber: Long = 0
+    for (index in 1..number) {
+        lastNumber = reverse % 10
+        reverse /= 10
+    }
+    return lastNumber.toInt()
+}
