@@ -2,6 +2,8 @@
 
 package lesson6.task1
 
+import lesson2.task2.daysInMonth
+
 // Урок 6: разбор строк, исключения
 // Максимальное количество баллов = 13
 // Рекомендуемое количество баллов = 11
@@ -74,7 +76,33 @@ fun main() {
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30.02.2009) считается неверными
  * входными данными.
  */
-fun dateStrToDigit(str: String): String = TODO()
+fun dateStrToDigit(str: String): String {
+    val date = str.split(" ").toMutableList()
+    if (date.size == 3) {
+        val month = when (date[1]) {
+            "января" -> "01"
+            "февраля" -> "02"
+            "марта" -> "03"
+            "апреля" -> "04"
+            "мая" -> "05"
+            "июня" -> "06"
+            "июля" -> "07"
+            "августа" -> "08"
+            "сентября" -> "09"
+            "октября" -> "10"
+            "ноября" -> "11"
+            "декабря" -> "12"
+            else -> return ""
+        }
+        if (date[0].toInt() < 10) {
+            date[0] = "0${date[0]}"
+        }
+        if (date[0].toInt() in 1..daysInMonth(month.toInt(), date[2].toInt())
+            && date[2].toInt() > 0
+        ) return "${date[0]}.$month.${date[2]}"
+    }
+    return ""
+}
 
 /**
  * Средняя (4 балла)
@@ -86,7 +114,30 @@ fun dateStrToDigit(str: String): String = TODO()
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30 февраля 2009) считается неверными
  * входными данными.
  */
-fun dateDigitToStr(digital: String): String = TODO()
+fun dateDigitToStr(digital: String): String {
+    val date = digital.split(".")
+    if (date.size == 3) {
+        val month = when (date[1]) {
+            "01" -> "января"
+            "02" -> "февраля"
+            "03" -> "марта"
+            "04" -> "апреля"
+            "05" -> "мая"
+            "06" -> "июня"
+            "07" -> "июля"
+            "08" -> "августа"
+            "09" -> "сентября"
+            "10" -> "октября"
+            "11" -> "ноября"
+            "12" -> "декабря"
+            else -> return ""
+        }
+        if (date[0].toInt() in 1..daysInMonth(date[1].toInt(), date[2].toInt())
+            && date[2].toInt() > 0
+        ) return "${date[0].toInt()} $month ${date[2]}"
+    }
+    return ""
+}
 
 /**
  * Средняя (4 балла)

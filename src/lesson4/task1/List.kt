@@ -3,6 +3,10 @@
 package lesson4.task1
 
 import lesson1.task1.discriminant
+import lesson1.task1.sqr
+import lesson3.task1.isPrime
+import lesson3.task1.minDivisor
+import lesson3.task1.revert
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -166,7 +170,7 @@ fun center(list: MutableList<Double>): MutableList<Double> {
 fun times(a: List<Int>, b: List<Int>): Int {
     if (a.isNotEmpty() && b.isNotEmpty()) {
         var C = 0
-        for (i in 0 until a.size) C += a[i] * b[i]
+        for (i in a.indices) C += a[i] * b[i]
         return C
     }
     return 0
@@ -219,7 +223,22 @@ fun accumulate(list: MutableList<Int>): MutableList<Int> {
  * Результат разложения вернуть в виде списка множителей, например 75 -> (3, 5, 5).
  * Множители в списке должны располагаться по возрастанию.
  */
-fun factorize(n: Int): List<Int> = TODO()
+fun factorize(n: Int): List<Int> {
+    if (isPrime(n)) return listOf(n)
+    var number = n
+    val result = mutableListOf<Int>()
+    var divider = 2
+    while (number > 1) {
+        if (isPrime(divider)) {
+            if (number % divider == 0) {
+                number /= divider
+                result += divider
+            }
+            if (number % divider != 0) divider += 1
+        } else divider += 1
+    }
+    return result
+}
 
 /**
  * Сложная (4 балла)
@@ -228,7 +247,14 @@ fun factorize(n: Int): List<Int> = TODO()
  * Результат разложения вернуть в виде строки, например 75 -> 3*5*5
  * Множители в результирующей строке должны располагаться по возрастанию.
  */
-fun factorizeToString(n: Int): String = TODO()
+fun factorizeToString(n: Int): String {
+    var result = ""
+    for (i in 0 until factorize(n).size) {
+        result += factorize(n)[i]
+        if (i != factorize(n).size - 1) result += "*"
+    }
+    return result
+}
 
 /**
  * Средняя (3 балла)
@@ -237,7 +263,16 @@ fun factorizeToString(n: Int): String = TODO()
  * Результат перевода вернуть в виде списка цифр в base-ичной системе от старшей к младшей,
  * например: n = 100, base = 4 -> (1, 2, 1, 0) или n = 250, base = 14 -> (1, 3, 12)
  */
-fun convert(n: Int, base: Int): List<Int> = TODO()
+fun convert(n: Int, base: Int): List<Int> {
+    val result = mutableListOf<Int>()
+    var number = n
+    while (number > 0) {
+        result += number % base
+        number /= base
+    }
+    result.reverse()
+    return result
+}
 
 /**
  * Сложная (4 балла)
@@ -250,7 +285,45 @@ fun convert(n: Int, base: Int): List<Int> = TODO()
  * Использовать функции стандартной библиотеки, напрямую и полностью решающие данную задачу
  * (например, n.toString(base) и подобные), запрещается.
  */
-fun convertToString(n: Int, base: Int): String = TODO()
+fun convertToString(n: Int, base: Int): String {
+    var result = ""
+    var number = n
+    while (number > 0) {
+        if (number % base >= 10) {
+            val lastDigit = when (number % base) {
+                10 -> "a"
+                11 -> "b"
+                12 -> "c"
+                13 -> "d"
+                14 -> "e"
+                15 -> "f"
+                16 -> "g"
+                17 -> "h"
+                18 -> "i"
+                19 -> "j"
+                20 -> "k"
+                21 -> "l"
+                22 -> "m"
+                23 -> "n"
+                24 -> "o"
+                25 -> "p"
+                26 -> "q"
+                27 -> "r"
+                28 -> "s"
+                29 -> "t"
+                30 -> "u"
+                31 -> "v"
+                32 -> "w"
+                33 -> "x"
+                34 -> "y"
+                else -> "z"
+            }
+            result += lastDigit
+        } else result += number % base
+        number /= base
+    }
+    return result.reversed()
+}
 
 /**
  * Средняя (3 балла)
@@ -259,7 +332,17 @@ fun convertToString(n: Int, base: Int): String = TODO()
  * из системы счисления с основанием base в десятичную.
  * Например: digits = (1, 3, 12), base = 14 -> 250
  */
-fun decimal(digits: List<Int>, base: Int): Int = TODO()
+fun decimal(digits: List<Int>, base: Int): Int {
+    var i = digits.size
+    var d = 0
+    var result = 0.0
+    while (i >= 1) {
+        result += digits[d] * base.toDouble().pow(i - 1)
+        d += 1
+        i -= 1
+    }
+    return result.toInt()
+}
 
 /**
  * Сложная (4 балла)
@@ -283,7 +366,62 @@ fun decimalFromString(str: String, base: Int): Int = TODO()
  * 90 = XC, 100 = C, 400 = CD, 500 = D, 900 = CM, 1000 = M.
  * Например: 23 = XXIII, 44 = XLIV, 100 = C
  */
-fun roman(n: Int): String = TODO()
+fun roman(n: Int): String {
+    var result = ""
+    var digit: String
+    if (n >= 1000) {
+        digit = when (n % 10000 - n % 1000) {
+            1000 -> "M"
+            2000 -> "MM"
+            3000 -> "MMM"
+            else -> ""
+        }
+        result += digit
+    }
+    if (n >= 100) {
+        digit = when (n % 1000 - n % 100) {
+            100 -> "C"
+            200 -> "CC"
+            300 -> "CCC"
+            400 -> "CD"
+            500 -> "D"
+            600 -> "DC"
+            700 -> "DCC"
+            800 -> "DCCC"
+            900 -> "CM"
+            else -> ""
+        }
+        result += digit
+    }
+    if (n % 100 != 0) {
+        digit = when (n % 100 - n % 10) {
+            10 -> "X"
+            20 -> "XX"
+            30 -> "XXX"
+            40 -> "XL"
+            50 -> "L"
+            60 -> "LX"
+            70 -> "LXX"
+            80 -> "LXXX"
+            90 -> "XC"
+            else -> ""
+        }
+        result += digit
+    }
+    digit = when (n % 10) {
+        1 -> "I"
+        2 -> "II"
+        3 -> "III"
+        4 -> "IV"
+        5 -> "V"
+        6 -> "VI"
+        7 -> "VII"
+        8 -> "VIII"
+        9 -> "IX"
+        else -> ""
+    }
+    return result + digit
+}
 
 /**
  * Очень сложная (7 баллов)
@@ -292,4 +430,132 @@ fun roman(n: Int): String = TODO()
  * Например, 375 = "триста семьдесят пять",
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
-fun russian(n: Int): String = TODO()
+fun russian(n: Int): String {
+    var result = ""
+    var digit: String
+    var flag = true
+    if (n >= 100000) {
+        digit = when ((n % 1000000 - n % 100000) / 1000) {
+            100 -> "сто "
+            200 -> "двести "
+            300 -> "триста "
+            400 -> "четыреста "
+            500 -> "пятьсот "
+            600 -> "шестьсот "
+            700 -> "семьсот "
+            800 -> "восемьсот "
+            900 -> "девятьсот "
+            else -> ""
+        }
+        result += digit
+    }
+    if (n >= 10000) {
+        if (n % 100000 in 10000..19999) {
+            digit = when ((n % 100000 - n % 1000) / 1000) {
+                10 -> "десять тысяч "
+                11 -> "одиннадцать тысяч "
+                12 -> "двенадцать тысяч "
+                13 -> "тринадцать тысяч "
+                14 -> "четырнадцать тысяч "
+                15 -> "пятнадцать тысяч "
+                16 -> "шестнадцать тысяч "
+                17 -> "семнадцать тысяч "
+                18 -> "восемнадцать тысяч "
+                19 -> "девятнадцать тысяч "
+                else -> ""
+            }
+            flag = false
+        } else digit = when ((n % 100000 - n % 10000) / 1000) {
+            20 -> "двадцать "
+            30 -> "тридцать "
+            40 -> "сорок "
+            50 -> "пятьдесят "
+            60 -> "шестьдесят "
+            70 -> "семьдесят "
+            80 -> "восемьдесят "
+            90 -> "девяносто "
+            else -> ""
+        }
+        result += digit
+    }
+    if (n >= 1000 && flag) {
+        digit = when ((n % 10000 - n % 1000) / 1000) {
+            1 -> "одна тысяча "
+            2 -> "две тысячи "
+            3 -> "три тысячи "
+            4 -> "четыре тысячи "
+            5 -> "пять тысяч "
+            6 -> "шесть тысяч "
+            7 -> "семь тысяч "
+            8 -> "восемь тысяч "
+            9 -> "девять тысяч "
+            else -> "тысяч "
+        }
+        result += digit
+    }
+    if (n > 100) {
+        digit = when (n % 1000 - n % 100) {
+            100 -> "сто "
+            200 -> "двести "
+            300 -> "триста "
+            400 -> "четыреста "
+            500 -> "пятьсот "
+            600 -> "шестьсот "
+            700 -> "семьсот "
+            800 -> "восемьсот "
+            900 -> "девятьсот "
+            else -> ""
+        }
+        result += digit
+    }
+    flag = true
+    if (n >= 10 && n % 100 != 0) {
+        if (n in 10..19) {
+            digit = when (n % 100) {
+                10 -> "десять"
+                11 -> "одиннадцать"
+                12 -> "двенадцать"
+                13 -> "тринадцать"
+                14 -> "четырнадцать"
+                15 -> "пятнадцать"
+                16 -> "шестнадцать"
+                17 -> "семнадцать"
+                18 -> "восемнадцать"
+                19 -> "девятнадцать"
+                else -> ""
+            }
+            flag = false
+        } else {
+            digit = when (n % 100 - n % 10) {
+                20 -> "двадцать "
+                30 -> "тридцать "
+                40 -> "сорок "
+                50 -> "пятьдесят "
+                60 -> "шестьдесят "
+                70 -> "семьдесят "
+                80 -> "восемьдесят "
+                90 -> "девяносто "
+                else -> ""
+            }
+        }
+        result += digit
+    }
+    if (flag) {
+        digit = when (n % 10) {
+            1 -> "один"
+            2 -> "два"
+            3 -> "три"
+            4 -> "четыре"
+            5 -> "пять"
+            6 -> "шесть"
+            7 -> "семь"
+            8 -> "восемь"
+            9 -> "девять"
+            else -> ""
+        }
+        result += digit
+    }
+    while (result.takeLast(1) == " ")
+        result = result.replaceFirst(".$".toRegex(), "")
+    return result
+}

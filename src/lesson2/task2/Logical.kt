@@ -20,10 +20,10 @@ fun pointInsideCircle(x: Double, y: Double, x0: Double, y0: Double, r: Double) =
  * Определить, счастливое ли заданное число, вернуть true, если это так.
  */
 fun isNumberHappy(number: Int): Boolean {
-    val firstNumber: Int = (number - number % 1000) / 1000
-    val secondNumber: Int = (number % 1000 - number % 100) / 100
-    val thirdNumber: Int = (number % 100 - number % 10) / 10
-    val fourthNumber: Int = number % 10
+    val firstNumber = (number - number % 1000) / 1000
+    val secondNumber = (number % 1000 - number % 100) / 100
+    val thirdNumber = (number % 100 - number % 10) / 10
+    val fourthNumber = number % 10
     return ((firstNumber + secondNumber) == (thirdNumber + fourthNumber))
 }
 
@@ -48,7 +48,7 @@ fun daysInMonth(month: Int, year: Int): Int = when {
     ((year % 4 == 0 && year % 100 == 0 &&
             year % 400 != 0) || year % 4 != 0) && month == 2 -> 28
 
-    month == 2 && year % 4 == 0 -> 29
+    month == 2 -> 29
     else -> 30
 }
 
@@ -73,7 +73,6 @@ fun circleInside(
  * кирпич 4 х 4 х 4 пройдёт через отверстие 4 х 4.
  * Вернуть true, если кирпич пройдёт
  */
-fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean {
-    return (a <= r && b <= s) || (b <= r && c <= s) || (c <= r && a <= s) ||
+fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean =
+    (a <= r && b <= s) || (b <= r && c <= s) || (c <= r && a <= s) ||
             (a <= s && b <= r) || (b <= s && c <= r) || (c <= s && a <= r)
-}

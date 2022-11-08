@@ -6,6 +6,7 @@ import lesson1.task1.discriminant
 import lesson1.task1.sqr
 import kotlin.math.abs
 import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.sqrt
 
 // Урок 2: ветвления (здесь), логический тип (см. 2.2).
@@ -169,12 +170,11 @@ fun triangleKind(a: Double, b: Double, c: Double): Int {
  * Найти длину пересечения отрезков AB и CD.
  * Если пересечения нет, вернуть -1.
  */
-fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int = when {
-    c < b && (d > b) && c > a -> b - c
-    c < a && (d > a) && d < b -> d - a
-    b == c || a == d -> 0
-    c > a && b > d -> d - c
-    a > c && d > b -> b - a
-    a == c && b == d -> b - a
-    else -> -1
+fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int {
+    if ((b < c) or (d < a)) return -1
+    else {
+        if ((a <= c) && (c <= b)) return min(b, d) - c
+        if ((c <= a) && (a <= d)) return min(b, d) - a
+    }
+    return -1
 }

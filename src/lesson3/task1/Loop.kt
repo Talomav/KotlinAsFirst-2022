@@ -4,10 +4,7 @@ package lesson3.task1
 
 import java.lang.Double.MAX_VALUE
 import java.lang.Double.NaN
-import kotlin.math.max
-import kotlin.math.min
-import kotlin.math.pow
-import kotlin.math.sqrt
+import kotlin.math.*
 
 // Урок 3: циклы
 // Максимальное количество баллов = 9
@@ -80,7 +77,7 @@ fun digitCountInNumber(n: Int, m: Int): Int =
 fun digitNumber(n: Int): Int {
     if (n == 0) return 1
     var count = 0
-    var number = n
+    var number = abs(n)
     while (number > 0) {
         count++
         number /= 10
@@ -125,13 +122,7 @@ fun minDivisor(n: Int): Int {
  *
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
-fun maxDivisor(n: Int): Int {
-    val rootN = sqrt(n.toDouble())
-    for (i in 2..rootN.toInt()) {
-        if (n % i == 0) return n / i
-    }
-    return 1
-}
+fun maxDivisor(n: Int): Int = n / minDivisor(n)
 
 /**
  * Простая (2 балла)
@@ -167,10 +158,10 @@ fun collatzSteps(x: Int): Int {
  * минимальное число k, которое делится и на m и на n без остатка
  */
 fun lcm(m: Int, n: Int): Int {
-    for (k in max(m, n)..n * m) {
-        if ((k % m == 0) && (k % n == 0)) return k
+    for (i in 2..min(m, n)) {
+        if (m % i == 0 && n % i == 0) return (m * n / i)
     }
-    return -1
+    return m * n
 }
 
 /**
@@ -181,9 +172,13 @@ fun lcm(m: Int, n: Int): Int {
  * Например, 25 и 49 взаимно простые, а 6 и 8 -- нет.
  */
 fun isCoPrime(m: Int, n: Int): Boolean {
+    if (m % 2 == 0 && n % 2 == 0) return false
     var flag = true
-    for (d in 2..(min(m, n))) {
-        if ((m % d == 0) && (n % d == 0)) flag = false
+    for (d in 3..min(m, n) step 2) {
+        if (m % d == 0 && n % d == 0) {
+            flag = false
+            break
+        }
     }
     return flag
 }
@@ -282,7 +277,35 @@ fun cos(x: Double, eps: Double): Double = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun squareSequenceDigit(n: Int): Int = TODO()
+fun squareSequenceDigit(n: Int): Int {
+    if (n * n < 10) return n * n
+    var number = 4
+    var lastDigit = 1
+    var i = 3
+    var lastNumber: Int
+    while (i != n) {
+        if (number % 10 == 0) {
+            lastNumber = revert(number * number)
+            while (lastDigit != 0) {
+                lastDigit = lastNumber % 10
+                lastNumber /= 10
+                i += 1
+                if (i == n) return lastDigit
+            }
+            i += digitNumber(number * number) - digitNumber(lastNumber) - 1
+            if (i >= n) return 0
+            number += 1
+        }
+        lastNumber = revert(number * number)
+        while (lastNumber != 0 && i != n) {
+            lastDigit = lastNumber % 10
+            lastNumber /= 10
+            i += 1
+        }
+        number += 1
+    }
+    return lastDigit
+}
 
 /**
  * Сложная (5 баллов)
@@ -294,30 +317,18 @@ fun squareSequenceDigit(n: Int): Int = TODO()
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun fibSequenceDigit(n: Int): Int {
+    if (n <= 6) return (fib(n))
     var number = n
-    var fibSequence: Long = 1
-    if (n <= 19) for (index in 2..12) {
-        for (i in 0 until digitNumber(fib(index))) fibSequence *= 10
-        fibSequence += fib(index)
-    }
-    else {
-        number -= 19
-        for (index in 13..17) {
-            fibSequence -= 1
-            for (i in 0 until digitNumber(fib(index))) fibSequence *= 10
-            fibSequence += fib(index)
+    var index = 1
+    var lastNumber = 0
+    while (index != n) {
+        var lastFib = revert(fib(index))
+        while (lastFib != 0 && number != 0) {
+            lastNumber = lastFib % 10
+            lastFib /= 10
+            number -= 1
         }
+        index += 1
     }
-    var reverse: Long = 0
-    while (fibSequence > 0) {
-        val lastNumber = fibSequence % 10
-        reverse = reverse * 10 + lastNumber
-        fibSequence /= 10
-    }
-    var lastNumber: Long = 0
-    for (index in 1..number) {
-        lastNumber = reverse % 10
-        reverse /= 10
-    }
-    return lastNumber.toInt()
+    return lastNumber
 }
