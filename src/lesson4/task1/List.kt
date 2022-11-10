@@ -510,7 +510,7 @@ fun russian(n: Int): String {
     }
     flag = true
     if (n >= 10 && n % 100 != 0) {
-        if (n in 10..19) {
+        if (n % 100 in 10..19) {
             digit = when (n % 100) {
                 10 -> "десять"
                 11 -> "одиннадцать"
