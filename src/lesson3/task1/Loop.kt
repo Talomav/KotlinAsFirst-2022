@@ -158,8 +158,12 @@ fun collatzSteps(x: Int): Int {
  * минимальное число k, которое делится и на m и на n без остатка
  */
 fun lcm(m: Int, n: Int): Int {
-    for (i in 2..min(m, n)) {
-        if (m % i == 0 && n % i == 0) return (m * n / i)
+    if (m == n) return m
+    for (i in min(m, n) downTo 2) {
+        if (m % i == 0 && n % i == 0) {
+            println(i)
+            return (m * n / i)
+        }
     }
     return m * n
 }
@@ -320,10 +324,17 @@ fun fibSequenceDigit(n: Int): Int {
     if (n <= 6) return (fib(n))
     var number = n
     var index = 1
+    var indicator = 1000
     var lastNumber = 0
-    while (index != n) {
+    while (number > 0) {
+        if (n >= 30) println("$index, ${fib(index)}")
         var lastFib = revert(fib(index))
         while (lastFib != 0 && number != 0) {
+            if (fib(index) > indicator) {
+                number -= 1
+                indicator *= 1000
+                println(index)
+            }
             lastNumber = lastFib % 10
             lastFib /= 10
             number -= 1

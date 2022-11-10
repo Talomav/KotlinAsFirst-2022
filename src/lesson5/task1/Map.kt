@@ -181,12 +181,14 @@ fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
 fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<String, String> {
     val result = mutableMapOf<String, String>()
     for ((nameA, numberA) in mapA) {
-        result += if (mapB.containsKey(nameA) && !mapB.containsValue(numberA)) {
-            Pair(nameA, numberA + ", " + mapB[nameA])
+        result += if (mapB.containsKey(nameA) && mapB[nameA] != numberA) {
+            if (numberA.isEmpty()) {
+                Pair(nameA, mapB[nameA].toString())
+            } else Pair(nameA, numberA + ", " + mapB[nameA])
         } else Pair(nameA, numberA)
     }
     for ((nameB, numberB) in mapB) {
-        if (!mapA.containsKey(nameB)) {
+        if (!mapA.containsKey(nameB) && numberB.isNotEmpty()) {
             result += Pair(nameB, numberB)
         }
     }
