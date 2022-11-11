@@ -161,7 +161,6 @@ fun lcm(m: Int, n: Int): Int {
     if (m == n) return m
     for (i in min(m, n) downTo 2) {
         if (m % i == 0 && n % i == 0) {
-            println(i)
             return (m * n / i)
         }
     }
@@ -326,13 +325,11 @@ fun fibSequenceDigit(n: Int): Int {
     var indicator = 1000
     var lastNumber = 0
     while (number > 0) {
-        if (n >= 30) println("$index, ${fib(index)}")
         var lastFib = revert(fib(index))
         while (lastFib != 0 && number != 0) {
             if (fib(index) > indicator) {
                 number -= 1
                 indicator *= 1000
-                println(index)
             }
             lastNumber = lastFib % 10
             lastFib /= 10
