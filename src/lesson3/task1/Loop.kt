@@ -287,24 +287,23 @@ fun squareSequenceDigit(n: Int): Int {
     var lastDigit = 1
     var i = 3
     var lastNumber: Int
-    while (i != n) {
-        if (number % 10 == 0) {
-            lastNumber = revert(number * number)
-            while (lastDigit != 0) {
-                lastDigit = lastNumber % 10
-                lastNumber /= 10
-                i += 1
-                if (i == n) return lastDigit
-            }
-            i += digitNumber(number * number) - digitNumber(lastNumber) - 1
-            if (i >= n) return 0
-            number += 1
+    while (i < n) {
+        var zero = 0
+        lastNumber = number * number
+        while (lastNumber % 10 == 0 ) {
+            zero += 1
+            lastNumber /= 10
         }
-        lastNumber = revert(number * number)
-        while (lastNumber != 0 && i != n) {
+        lastNumber = revert(lastNumber)
+        while (lastNumber > 0) {
+            i += 1
             lastDigit = lastNumber % 10
             lastNumber /= 10
-            i += 1
+            if (i == n) return lastDigit
+        }
+        if (zero > 0) {
+            i += zero
+            lastDigit = 0
         }
         number += 1
     }

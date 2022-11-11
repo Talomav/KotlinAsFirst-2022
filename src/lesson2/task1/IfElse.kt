@@ -153,7 +153,7 @@ fun rookOrBishopThreatens(
 fun triangleKind(a: Double, b: Double, c: Double): Int {
     val longSide = maxOf(a, b, c)
     val shortSide = minOf(a, b, c)
-    val mediumSide = (a + b + c) - longSide - shortSide
+    val mediumSide = a + b + c - longSide - shortSide
     return when {
         longSide > (shortSide + mediumSide) -> -1
         sqr(longSide) > sqr(shortSide) + sqr(mediumSide) -> 2
