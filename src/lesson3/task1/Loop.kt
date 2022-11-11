@@ -289,7 +289,7 @@ fun squareSequenceDigit(n: Int): Int {
     while (i < n) {
         var zero = 0
         lastNumber = number * number
-        while (lastNumber % 10 == 0 ) {
+        while (lastNumber % 10 == 0) {
             zero += 1
             lastNumber /= 10
         }
