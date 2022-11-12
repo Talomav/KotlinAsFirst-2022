@@ -2,6 +2,8 @@
 
 package lesson5.task1
 
+import lesson2.task1.timeForHalfWay
+
 // Урок 5: ассоциативные массивы и множества
 // Максимальное количество баллов = 14
 // Рекомендуемое количество баллов = 9
@@ -188,7 +190,7 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
         } else Pair(nameA, numberA)
     }
     for ((nameB, numberB) in mapB) {
-        if (!mapA.containsKey(nameB) && numberB.isNotEmpty()) {
+        if (!mapA.containsKey(nameB)) {
             result += Pair(nameB, numberB)
         }
     }
@@ -210,16 +212,16 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
     val map = mutableMapOf<String, Double>()
     val list = stockPrices + Pair("Nothing", 0.0)
     var name = list[0].component1()
-    var count = 0
+    var count = 0.0
     var price = 0.0
     for ((key, value) in list) {
         if (key == name) {
-            count += 1
+            count += 1.0
             price += value
         } else {
             map += Pair(name, price / count)
             name = key
-            count = 1
+            count = 1.0
             price = value
         }
     }
@@ -242,6 +244,7 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
  *   ) -> "Мария"
  */
 fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): String? {
+    if (kind.isEmpty()) return kind
     var result = ""
     var minPrice = Double.MAX_VALUE
     for ((name, value) in stuff) {
@@ -373,11 +376,13 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
  */
 fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
     if (list.size <= 1) return Pair(-1, -1)
-    var i = -1
-    for (element in list) {
-        i += 1
-        if (list.contains(number - element) && list[i] != number - element)
-            return Pair(list.indexOf(element), list.indexOf(number - element))
+    for (index in list.indices) {
+        if (list.contains(number - list[index]) &&
+            index != list.indexOf(number - list[index])
+        ) return Pair(
+            minOf(list.indexOf(number - list[index]), index),
+            maxOf(list.indexOf(number - list[index]), index)
+        )
     }
     return Pair(-1, -1)
 }

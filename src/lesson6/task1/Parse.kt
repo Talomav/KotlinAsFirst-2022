@@ -95,7 +95,7 @@ fun dateStrToDigit(str: String): String {
             else -> return ""
         }
         if (date[0].toInt() < 10) {
-            date[0] = "0${date[0]}"
+            date[0] = "0${date[0].toInt()}"
         }
         if (date[0].toInt() in 1..daysInMonth(month.toInt(), date[2].toInt())
             && date[2].toInt() > 0

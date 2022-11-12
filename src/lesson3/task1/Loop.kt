@@ -281,30 +281,25 @@ fun cos(x: Double, eps: Double): Double = TODO()
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun squareSequenceDigit(n: Int): Int {
-    if (n * n < 10) return n * n
-    var number = 4
-    var lastDigit = 1
-    var i = 3
-    var lastNumber: Int
-    while (i < n) {
-        var zero = 0
-        lastNumber = number * number
-        while (lastNumber % 10 == 0) {
-            zero += 1
-            lastNumber /= 10
-        }
-        lastNumber = revert(lastNumber)
+    var number = 1
+    var index = 0
+    var lastDigit = -1
+    while (index < n) {
+        var lastNumber = (number * number)
+        var pow = digitNumber(lastNumber) - 1
         while (lastNumber > 0) {
-            i += 1
-            lastDigit = lastNumber % 10
-            lastNumber /= 10
-            if (i == n) return lastDigit
-        }
-        if (zero > 0) {
-            i += zero
-            lastDigit = 0
+            lastDigit = (lastNumber - lastNumber % 10.0.pow(pow).toInt()) / 10.0.pow(pow).toInt()
+            index += 1
+            if (index >= n) return lastDigit
+            if (lastNumber % 10.0.pow(pow).toInt() == 0 && lastNumber >= 10) {
+                lastDigit = 0
+                index += digitNumber(lastNumber) - 1
+            }
+            lastNumber %= 10.0.pow(pow).toInt()
+            pow -= 1
         }
         number += 1
+
     }
     return lastDigit
 }
@@ -320,22 +315,25 @@ fun squareSequenceDigit(n: Int): Int {
  */
 fun fibSequenceDigit(n: Int): Int {
     if (n <= 6) return (fib(n))
-    var number = n
-    var index = 1
-    var indicator = 1000
-    var lastNumber = 0
-    while (number > 0) {
-        var lastFib = revert(fib(index))
-        while (lastFib != 0 && number != 0) {
-            if (fib(index) > indicator) {
-                number -= 1
-                indicator *= 1000
+    var index = 6
+    var fibIndex = 7
+    var lastDigit = -1
+    while (index < n) {
+        var number = fib(fibIndex)
+        var pow = digitNumber(number) - 1
+        while (number > 0) {
+            lastDigit = (number - number % 10.0.pow(pow).toInt()) / 10.0.pow(pow).toInt()
+            index += 1
+            if (index >= n) return lastDigit
+            if (number % 10.0.pow(pow).toInt() == 0 && number >= 10) {
+                lastDigit = 0
+                index += digitNumber(number) - 1
             }
-            lastNumber = lastFib % 10
-            lastFib /= 10
-            number -= 1
+            number %= 10.0.pow(pow).toInt()
+            pow -= 1
         }
-        index += 1
+        fibIndex += 1
+
     }
-    return lastNumber
+    return lastDigit
 }
