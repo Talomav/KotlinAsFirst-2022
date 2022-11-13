@@ -184,9 +184,7 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
     val result = mutableMapOf<String, String>()
     for ((nameA, numberA) in mapA) {
         result += if (mapB.containsKey(nameA) && mapB[nameA] != numberA) {
-            if (numberA.isEmpty()) {
-                Pair(nameA, mapB[nameA].toString())
-            } else Pair(nameA, numberA + ", " + mapB[nameA])
+            Pair(nameA, numberA + ", " + mapB[nameA])
         } else Pair(nameA, numberA)
     }
     for ((nameB, numberB) in mapB) {
@@ -209,23 +207,23 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
  */
 fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Double> {
     if (stockPrices.size <= 1) return stockPrices.toMap()
-    val map = mutableMapOf<String, Double>()
-    val list = stockPrices + Pair("Nothing", 0.0)
-    var name = list[0].component1()
-    var count = 0.0
-    var price = 0.0
-    for ((key, value) in list) {
-        if (key == name) {
-            count += 1.0
-            price += value
-        } else {
-            map += Pair(name, price / count)
-            name = key
-            count = 1.0
-            price = value
+    val result = mutableMapOf<String, Double>()
+    val names = mutableListOf<String>()
+    for ((key, value) in stockPrices) {
+        var prices = 0.0
+        var count = 0.0
+        if (!names.contains(key)) {
+            for ((name, price) in stockPrices) {
+                if (key == name) {
+                    prices += price
+                    count += 1.0
+                }
+            }
+            names += key
+            result += Pair(key, prices / count)
         }
     }
-    return map
+    return result
 }
 
 /**
@@ -244,16 +242,18 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
  *   ) -> "Мария"
  */
 fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): String? {
-    if (kind.isEmpty()) return kind
     var result = ""
-    var minPrice = Double.MAX_VALUE
+    val price = mutableListOf(Double.MAX_VALUE)
     for ((name, value) in stuff) {
-        if (value.component1() == kind && value.component2() < minPrice) {
-            minPrice = value.component2()
+        if (value.component1() == kind &&
+            value.component2() <= price.min() &&
+            value.component2() > 0
+        ) {
+            price += value.component2()
             result = name
         }
     }
-    return if (minPrice != Double.MAX_VALUE) result
+    return if (price.size > 1) result
     else null
 }
 
