@@ -147,7 +147,8 @@ fun mean(list: List<Double>): Double =
  */
 fun center(list: MutableList<Double>): MutableList<Double> {
     if (list.isNotEmpty()) {
-        for (i in list.indices) list[i] -= mean(list)
+        val average = mean(list)
+        for (i in list.indices) list[i] -= average
     }
     return list
 }
@@ -281,6 +282,7 @@ fun convert(n: Int, base: Int): List<Int> {
  * (например, n.toString(base) и подобные), запрещается.
  */
 fun convertToString(n: Int, base: Int): String {
+    if (n == 0) return "0"
     var result = ""
     var number = n
     val list = listOf(
