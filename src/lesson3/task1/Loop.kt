@@ -2,8 +2,6 @@
 
 package lesson3.task1
 
-import java.lang.Double.MAX_VALUE
-import java.lang.Double.NaN
 import kotlin.math.*
 
 // Урок 3: циклы
@@ -175,9 +173,9 @@ fun lcm(m: Int, n: Int): Int {
  * Например, 25 и 49 взаимно простые, а 6 и 8 -- нет.
  */
 fun isCoPrime(m: Int, n: Int): Boolean {
-    if (m % 2 == 0 && n % 2 == 0) return false
+    if (m % 2 == 0 && n % 2 == 0 || max(m, n) % min(m, n) == 0) return false
     var flag = true
-    for (d in 3..min(m, n) step 2) {
+    for (d in 3..sqrt(min(m, n).toDouble()).toInt() step 2) {
         if (m % d == 0 && n % d == 0) {
             flag = false
             break
@@ -293,7 +291,11 @@ fun squareSequenceDigit(n: Int): Int {
             if (index >= n) return lastDigit
             if (lastNumber % 10.0.pow(pow).toInt() == 0 && lastNumber >= 10) {
                 lastDigit = 0
-                index += digitNumber(lastNumber) - 1
+                while (lastNumber % 10 == 0) {
+                    index += 1
+                    lastNumber /= 10
+                }
+                break
             }
             lastNumber %= 10.0.pow(pow).toInt()
             pow -= 1
@@ -327,7 +329,11 @@ fun fibSequenceDigit(n: Int): Int {
             if (index >= n) return lastDigit
             if (number % 10.0.pow(pow).toInt() == 0 && number >= 10) {
                 lastDigit = 0
-                index += digitNumber(number) - 1
+                while (number % 10 == 0) {
+                    index += 1
+                    number /= 10
+                }
+                break
             }
             number %= 10.0.pow(pow).toInt()
             pow -= 1

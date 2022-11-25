@@ -94,12 +94,16 @@ fun dateStrToDigit(str: String): String {
             "декабря" -> "12"
             else -> return ""
         }
-        if (date[0].toInt() < 10) {
-            date[0] = "0${date[0].toInt()}"
+        try {
+            if (date[0].toInt() < 10) {
+                date[0] = "0${date[0].toInt()}"
+            }
+            if (date[0].toInt() in 1..daysInMonth(month.toInt(), date[2].toInt())
+                && date[2].toInt() > 0
+            ) return "${date[0]}.$month.${date[2]}"
+        } catch (e: NumberFormatException) {
+            return ""
         }
-        if (date[0].toInt() in 1..daysInMonth(month.toInt(), date[2].toInt())
-            && date[2].toInt() > 0
-        ) return "${date[0]}.$month.${date[2]}"
     }
     return ""
 }
@@ -132,9 +136,13 @@ fun dateDigitToStr(digital: String): String {
             "12" -> "декабря"
             else -> return ""
         }
-        if (date[0].toInt() in 1..daysInMonth(date[1].toInt(), date[2].toInt())
-            && date[2].toInt() > 0
-        ) return "${date[0].toInt()} $month ${date[2]}"
+        try {
+            if (date[0].toInt() in 1..daysInMonth(date[1].toInt(), date[2].toInt())
+                && date[2].toInt() > 0
+            ) return "${date[0].toInt()} $month ${date[2]}"
+        } catch (e: NumberFormatException) {
+            return ""
+        }
     }
     return ""
 }

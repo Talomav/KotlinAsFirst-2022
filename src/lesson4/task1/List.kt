@@ -3,10 +3,7 @@
 package lesson4.task1
 
 import lesson1.task1.discriminant
-import lesson1.task1.sqr
 import lesson3.task1.isPrime
-import lesson3.task1.minDivisor
-import lesson3.task1.revert
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -126,12 +123,9 @@ fun buildSumExample(list: List<Int>) = list.joinToString(separator = " + ", post
  * Модуль пустого вектора считать равным 0.0.
  */
 fun abs(v: List<Double>): Double {
-    if (v.isNotEmpty()) {
-        var amount = 0.0
-        for (element in v) amount += element.pow(2.0)
-        return sqrt(amount)
-    }
-    return 0.0
+    var count = 0.0
+    for (element in v) count += element.pow(2.0)
+    return sqrt(count)
 }
 
 /**
@@ -139,10 +133,9 @@ fun abs(v: List<Double>): Double {
  *
  * Рассчитать среднее арифметическое элементов списка list. Вернуть 0.0, если список пуст
  */
-fun mean(list: List<Double>): Double {
-    return if (list.isEmpty()) 0.0
+fun mean(list: List<Double>): Double =
+    if (list.isEmpty()) 0.0
     else list.sum() / list.size
-}
 
 /**
  * Средняя (3 балла)
@@ -154,8 +147,7 @@ fun mean(list: List<Double>): Double {
  */
 fun center(list: MutableList<Double>): MutableList<Double> {
     if (list.isNotEmpty()) {
-        val avg = list.sum() / list.size
-        for (i in 0 until list.size) list[i] = list[i] - avg
+        for (i in list.indices) list[i] -= mean(list)
     }
     return list
 }
@@ -169,9 +161,9 @@ fun center(list: MutableList<Double>): MutableList<Double> {
  */
 fun times(a: List<Int>, b: List<Int>): Int {
     if (a.isNotEmpty() && b.isNotEmpty()) {
-        var C = 0
-        for (i in a.indices) C += a[i] * b[i]
-        return C
+        var result = 0
+        for (i in a.indices) result += a[i] * b[i]
+        return result
     }
     return 0
 }
@@ -227,15 +219,16 @@ fun factorize(n: Int): List<Int> {
     if (isPrime(n)) return listOf(n)
     var number = n
     val result = mutableListOf<Int>()
-    var divider = 2
+    while (number % 2 == 0) {
+        result += 2
+        number /= 2
+    }
+    var divider = 3
     while (number > 1) {
-        if (isPrime(divider)) {
-            if (number % divider == 0) {
-                number /= divider
-                result += divider
-            }
-            if (number % divider != 0) divider += 1
-        } else divider += 1
+        if (isPrime(divider) && number % divider == 0) {
+            number /= divider
+            result += divider
+        } else divider += 2
     }
     return result
 }
@@ -249,9 +242,10 @@ fun factorize(n: Int): List<Int> {
  */
 fun factorizeToString(n: Int): String {
     var result = ""
-    for (i in 0 until factorize(n).size) {
-        result += factorize(n)[i]
-        if (i != factorize(n).size - 1) result += "*"
+    val dividerList = factorize(n)
+    for (i in dividerList.indices) {
+        result += dividerList[i]
+        if (i != dividerList.lastIndex) result += "*"
     }
     return result
 }
@@ -287,41 +281,15 @@ fun convert(n: Int, base: Int): List<Int> {
  * (например, n.toString(base) и подобные), запрещается.
  */
 fun convertToString(n: Int, base: Int): String {
-    if (n == 0) return "0"
     var result = ""
     var number = n
+    val list = listOf(
+        "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
+        "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
+        "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"
+    )
     while (number > 0) {
-        if (number % base >= 10) {
-            val lastDigit = when (number % base) {
-                10 -> "a"
-                11 -> "b"
-                12 -> "c"
-                13 -> "d"
-                14 -> "e"
-                15 -> "f"
-                16 -> "g"
-                17 -> "h"
-                18 -> "i"
-                19 -> "j"
-                20 -> "k"
-                21 -> "l"
-                22 -> "m"
-                23 -> "n"
-                24 -> "o"
-                25 -> "p"
-                26 -> "q"
-                27 -> "r"
-                28 -> "s"
-                29 -> "t"
-                30 -> "u"
-                31 -> "v"
-                32 -> "w"
-                33 -> "x"
-                34 -> "y"
-                else -> "z"
-            }
-            result += lastDigit
-        } else result += number % base
+        result += list[number % base]
         number /= base
     }
     return result.reversed()
@@ -370,59 +338,26 @@ fun decimalFromString(str: String, base: Int): Int = TODO()
  */
 fun roman(n: Int): String {
     var result = ""
-    var digit: String
-    if (n >= 1000) {
-        digit = when (n % 10000 - n % 1000) {
-            1000 -> "M"
-            2000 -> "MM"
-            3000 -> "MMM"
-            else -> ""
+    val list1 = listOf("M", "C", "X", "I")
+    val list2 = listOf("D", "L", "V")
+    val parts = listOf(n / 1000, n % 1000 / 100, n % 100 / 10, n % 10)
+    for (i in parts.indices) {
+        if (parts[i] > 0) {
+            result += when (parts[i]) {
+                1 -> list1[i]
+                2 -> list1[i] + list1[i]
+                3 -> list1[i] + list1[i] + list1[i]
+                4 -> list1[i] + list2[i - 1]
+                5 -> list2[i - 1]
+                6 -> list2[i - 1] + list1[i]
+                7 -> list2[i - 1] + list1[i] + list1[i]
+                8 -> list2[i - 1] + list1[i] + list1[i] + list1[i]
+                9 -> list1[i] + list1[i - 1]
+                else -> "-1"
+            }
         }
-        result += digit
     }
-    if (n >= 100) {
-        digit = when (n % 1000 - n % 100) {
-            100 -> "C"
-            200 -> "CC"
-            300 -> "CCC"
-            400 -> "CD"
-            500 -> "D"
-            600 -> "DC"
-            700 -> "DCC"
-            800 -> "DCCC"
-            900 -> "CM"
-            else -> ""
-        }
-        result += digit
-    }
-    if (n % 100 != 0) {
-        digit = when (n % 100 - n % 10) {
-            10 -> "X"
-            20 -> "XX"
-            30 -> "XXX"
-            40 -> "XL"
-            50 -> "L"
-            60 -> "LX"
-            70 -> "LXX"
-            80 -> "LXXX"
-            90 -> "XC"
-            else -> ""
-        }
-        result += digit
-    }
-    digit = when (n % 10) {
-        1 -> "I"
-        2 -> "II"
-        3 -> "III"
-        4 -> "IV"
-        5 -> "V"
-        6 -> "VI"
-        7 -> "VII"
-        8 -> "VIII"
-        9 -> "IX"
-        else -> ""
-    }
-    return result + digit
+    return result
 }
 
 /**
@@ -433,131 +368,37 @@ fun roman(n: Int): String {
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
 fun russian(n: Int): String {
-    var result = ""
-    var digit: String
-    var flag = true
-    if (n >= 100000) {
-        digit = when ((n % 1000000 - n % 100000) / 1000) {
-            100 -> "сто "
-            200 -> "двести "
-            300 -> "триста "
-            400 -> "четыреста "
-            500 -> "пятьсот "
-            600 -> "шестьсот "
-            700 -> "семьсот "
-            800 -> "восемьсот "
-            900 -> "девятьсот "
-            else -> ""
-        }
-        result += digit
-    }
-    if (n >= 10000) {
-        if (n % 100000 in 10000..19999) {
-            digit = when ((n % 100000 - n % 1000) / 1000) {
-                10 -> "десять тысяч "
-                11 -> "одиннадцать тысяч "
-                12 -> "двенадцать тысяч "
-                13 -> "тринадцать тысяч "
-                14 -> "четырнадцать тысяч "
-                15 -> "пятнадцать тысяч "
-                16 -> "шестнадцать тысяч "
-                17 -> "семнадцать тысяч "
-                18 -> "восемнадцать тысяч "
-                19 -> "девятнадцать тысяч "
-                else -> ""
+    val result = mutableListOf<String>()
+    val units = listOf(
+        "один", "два", "три", "четыре", "пять", "шесть",
+        "семь", "восемь", "девять", "одна", "две"
+    )
+    val tens = listOf(
+        "двадцать", "тридцать", "сорок", "пятьдесят",
+        "шестьдесят", "семьдесят", "восемьдесят", "девяносто",
+        "десять", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать",
+        "пятнадцать", "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать"
+    )
+    val hundreds = listOf(
+        "сто", "двести", "триста", "четыреста", "пятьсот",
+        "шестьсот", "семьсот", "восемьсот", "девятьсот"
+    )
+    val parts = listOf(n / 1000, n % 1000)
+    for (i in parts.indices) {
+        if (parts[i] > 0) {
+            if (parts[i] / 100 > 0) result += hundreds[parts[i] / 100 - 1]
+            if (parts[i] % 100 in 10..19) result += tens[parts[i] % 10 + 8]
+            if (parts[i] % 100 - parts[i] % 10 in 20..90)
+                result += tens[parts[i] % 100 / 10 - 2]
+            if (parts[i] % 100 !in 10..19 && parts[i] % 10 > 0) {
+                result += units[parts[i] % 10 - 1]
+                if (i == 0 && parts[i] % 10 in 1..2)
+                    result[result.lastIndex] = units[parts[i] % 10 + 8]
             }
-            flag = false
-        } else digit = when ((n % 100000 - n % 10000) / 1000) {
-            20 -> "двадцать "
-            30 -> "тридцать "
-            40 -> "сорок "
-            50 -> "пятьдесят "
-            60 -> "шестьдесят "
-            70 -> "семьдесят "
-            80 -> "восемьдесят "
-            90 -> "девяносто "
-            else -> ""
+            if (i == 0 && parts[i] % 100 !in 10..19 && parts[i] % 10 in 1..4)
+                result += "тысячи"
+            if (i == 0 && "тысячи" !in result) result += "тысяч"
         }
-        result += digit
     }
-    if (n >= 1000 && flag) {
-        digit = when ((n % 10000 - n % 1000) / 1000) {
-            1 -> "одна тысяча "
-            2 -> "две тысячи "
-            3 -> "три тысячи "
-            4 -> "четыре тысячи "
-            5 -> "пять тысяч "
-            6 -> "шесть тысяч "
-            7 -> "семь тысяч "
-            8 -> "восемь тысяч "
-            9 -> "девять тысяч "
-            else -> "тысяч "
-        }
-        result += digit
-    }
-    if (n > 100) {
-        digit = when (n % 1000 - n % 100) {
-            100 -> "сто "
-            200 -> "двести "
-            300 -> "триста "
-            400 -> "четыреста "
-            500 -> "пятьсот "
-            600 -> "шестьсот "
-            700 -> "семьсот "
-            800 -> "восемьсот "
-            900 -> "девятьсот "
-            else -> ""
-        }
-        result += digit
-    }
-    flag = true
-    if (n >= 10 && n % 100 != 0) {
-        if (n % 100 in 10..19) {
-            digit = when (n % 100) {
-                10 -> "десять"
-                11 -> "одиннадцать"
-                12 -> "двенадцать"
-                13 -> "тринадцать"
-                14 -> "четырнадцать"
-                15 -> "пятнадцать"
-                16 -> "шестнадцать"
-                17 -> "семнадцать"
-                18 -> "восемнадцать"
-                19 -> "девятнадцать"
-                else -> ""
-            }
-            flag = false
-        } else {
-            digit = when (n % 100 - n % 10) {
-                20 -> "двадцать "
-                30 -> "тридцать "
-                40 -> "сорок "
-                50 -> "пятьдесят "
-                60 -> "шестьдесят "
-                70 -> "семьдесят "
-                80 -> "восемьдесят "
-                90 -> "девяносто "
-                else -> ""
-            }
-        }
-        result += digit
-    }
-    if (flag) {
-        digit = when (n % 10) {
-            1 -> "один"
-            2 -> "два"
-            3 -> "три"
-            4 -> "четыре"
-            5 -> "пять"
-            6 -> "шесть"
-            7 -> "семь"
-            8 -> "восемь"
-            9 -> "девять"
-            else -> ""
-        }
-        result += digit
-    }
-    while (result.takeLast(1) == " ")
-        result = result.replaceFirst(".$".toRegex(), "")
-    return result
+    return result.joinToString(separator = " ")
 }
