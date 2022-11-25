@@ -396,8 +396,11 @@ fun russian(n: Int): String {
                     result[result.lastIndex] = units[parts[i] % 10 + 8]
             }
             if (i == 0 && parts[i] % 100 !in 10..19 && parts[i] % 10 in 1..4)
-                result += "тысячи"
-            if (i == 0 && "тысячи" !in result) result += "тысяч"
+                result += when (parts[i] % 10) {
+                    1 -> "тысяча"
+                    else -> "тысячи"
+                }
+            if (i == 0 && "тысячи" !in result &&"тысяча" !in result) result += "тысяч"
         }
     }
     return result.joinToString(separator = " ")
