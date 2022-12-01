@@ -3,7 +3,7 @@
 package lesson4.task1
 
 import lesson1.task1.discriminant
-import lesson3.task1.isPrime
+import lesson3.task1.maxDivisor
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -161,12 +161,9 @@ fun center(list: MutableList<Double>): MutableList<Double> {
  * C = a1b1 + a2b2 + ... + aNbN. Произведение пустых векторов считать равным 0.
  */
 fun times(a: List<Int>, b: List<Int>): Int {
-    if (a.isNotEmpty() && b.isNotEmpty()) {
-        var result = 0
-        for (i in a.indices) result += a[i] * b[i]
-        return result
-    }
-    return 0
+    var result = 0
+    for (i in a.indices) result += a[i] * b[i]
+    return result
 }
 
 /**
@@ -217,7 +214,6 @@ fun accumulate(list: MutableList<Int>): MutableList<Int> {
  * Множители в списке должны располагаться по возрастанию.
  */
 fun factorize(n: Int): List<Int> {
-    if (isPrime(n)) return listOf(n)
     var number = n
     val result = mutableListOf<Int>()
     while (number % 2 == 0) {
@@ -225,12 +221,13 @@ fun factorize(n: Int): List<Int> {
         number /= 2
     }
     var divider = 3
-    while (number > 1) {
-        if (isPrime(divider) && number % divider == 0) {
+    while (number > 1 && divider < maxDivisor(n)) {
+        if (number % divider == 0) {
             number /= divider
             result += divider
         } else divider += 2
     }
+    if (result.isEmpty()) result += n
     return result
 }
 
@@ -242,11 +239,12 @@ fun factorize(n: Int): List<Int> {
  * Множители в результирующей строке должны располагаться по возрастанию.
  */
 fun factorizeToString(n: Int): String {
-    var result = ""
     val dividerList = factorize(n)
-    for (i in dividerList.indices) {
-        result += dividerList[i]
-        if (i != dividerList.lastIndex) result += "*"
+    val result = buildString {
+        for (i in dividerList.indices) {
+            append(dividerList[i])
+            if (i != dividerList.lastIndex) append("*")
+        }
     }
     return result
 }
@@ -339,23 +337,25 @@ fun decimalFromString(str: String, base: Int): Int = TODO()
  * Например: 23 = XXIII, 44 = XLIV, 100 = C
  */
 fun roman(n: Int): String {
-    var result = ""
     val list1 = listOf("M", "C", "X", "I")
     val list2 = listOf("D", "L", "V")
     val parts = listOf(n / 1000, n % 1000 / 100, n % 100 / 10, n % 10)
-    for (i in parts.indices) {
-        if (parts[i] > 0) {
-            result += when (parts[i]) {
-                1 -> list1[i]
-                2 -> list1[i] + list1[i]
-                3 -> list1[i] + list1[i] + list1[i]
-                4 -> list1[i] + list2[i - 1]
-                5 -> list2[i - 1]
-                6 -> list2[i - 1] + list1[i]
-                7 -> list2[i - 1] + list1[i] + list1[i]
-                8 -> list2[i - 1] + list1[i] + list1[i] + list1[i]
-                9 -> list1[i] + list1[i - 1]
-                else -> "-1"
+    val result = buildString {
+        for (i in parts.indices) {
+            if (parts[i] > 0) {
+                append(
+                    when (parts[i]) {
+                        1 -> list1[i]
+                        2 -> list1[i] + list1[i]
+                        3 -> list1[i] + list1[i] + list1[i]
+                        4 -> list1[i] + list2[i - 1]
+                        5 -> list2[i - 1]
+                        6 -> list2[i - 1] + list1[i]
+                        7 -> list2[i - 1] + list1[i] + list1[i]
+                        8 -> list2[i - 1] + list1[i] + list1[i] + list1[i]
+                        else -> list1[i] + list1[i - 1]
+                    }
+                )
             }
         }
     }
@@ -402,7 +402,7 @@ fun russian(n: Int): String {
                     1 -> "тысяча"
                     else -> "тысячи"
                 }
-            if (i == 0 && "тысячи" !in result &&"тысяча" !in result) result += "тысяч"
+            if (i == 0 && "тысячи" !in result && "тысяча" !in result) result += "тысяч"
         }
     }
     return result.joinToString(separator = " ")

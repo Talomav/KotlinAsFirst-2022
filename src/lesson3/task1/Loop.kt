@@ -173,16 +173,15 @@ fun lcm(m: Int, n: Int): Int {
  * Например, 25 и 49 взаимно простые, а 6 и 8 -- нет.
  */
 fun isCoPrime(m: Int, n: Int): Boolean {
-    if (m == 1 || n == 1) return true
-    if (m % 2 == 0 && n % 2 == 0 || max(m, n) % min(m, n) == 0) return false
-    var flag = true
-    for (d in 3..sqrt(min(m, n).toDouble()).toInt() step 2) {
-        if (m % d == 0 && n % d == 0) {
-            flag = false
-            break
-        }
+    var digit1 = min(m, n)
+    var digit2 = max(m, n) - digit1
+    while (digit1 != digit2) {
+        val digit = max(digit1, digit2) - min(digit1, digit2)
+        digit1 = min(digit1, digit2)
+        digit2 = digit
+        if (digit1 == digit2 && digit1 > 1) return false
     }
-    return flag
+    return true
 }
 
 /**
@@ -292,10 +291,7 @@ fun squareSequenceDigit(n: Int): Int {
             if (index >= n) return lastDigit
             if (lastNumber % 10.0.pow(pow).toInt() == 0 && lastNumber >= 10) {
                 lastDigit = 0
-                while (lastNumber % 10 == 0) {
-                    index += 1
-                    lastNumber /= 10
-                }
+                index += pow
                 break
             }
             lastNumber %= 10.0.pow(pow).toInt()
@@ -330,10 +326,7 @@ fun fibSequenceDigit(n: Int): Int {
             if (index >= n) return lastDigit
             if (number % 10.0.pow(pow).toInt() == 0 && number >= 10) {
                 lastDigit = 0
-                while (number % 10 == 0) {
-                    index += 1
-                    number /= 10
-                }
+                index += pow
                 break
             }
             number %= 10.0.pow(pow).toInt()

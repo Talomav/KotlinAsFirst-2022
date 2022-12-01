@@ -78,7 +78,8 @@ fun main() {
  */
 fun dateStrToDigit(str: String): String {
     val date = str.split(" ").toMutableList()
-    if (date.size == 3) {
+    val regex = """(\d+)""".toRegex()
+    if (date.size == 3 && date[0] matches regex && date[2] matches regex) {
         val month = when (date[1]) {
             "января" -> "01"
             "февраля" -> "02"
@@ -94,16 +95,12 @@ fun dateStrToDigit(str: String): String {
             "декабря" -> "12"
             else -> return ""
         }
-        try {
-            if (date[0].toInt() < 10) {
-                date[0] = "0${date[0].toInt()}"
-            }
-            if (date[0].toInt() in 1..daysInMonth(month.toInt(), date[2].toInt())
-                && date[2].toInt() > 0
-            ) return "${date[0]}.$month.${date[2]}"
-        } catch (e: NumberFormatException) {
-            return ""
+        if (date[0].toInt() < 10) {
+            date[0] = "0${date[0].toInt()}"
         }
+        if (date[0].toInt() in 1..daysInMonth(month.toInt(), date[2].toInt())
+            && date[2].toInt() > 0
+        ) return "${date[0]}.$month.${date[2]}"
     }
     return ""
 }
@@ -120,7 +117,8 @@ fun dateStrToDigit(str: String): String {
  */
 fun dateDigitToStr(digital: String): String {
     val date = digital.split(".")
-    if (date.size == 3) {
+    val regex = """(\d+)""".toRegex()
+    if (date.size == 3 && date[0] matches regex && date[2] matches regex) {
         val month = when (date[1]) {
             "01" -> "января"
             "02" -> "февраля"
@@ -136,13 +134,10 @@ fun dateDigitToStr(digital: String): String {
             "12" -> "декабря"
             else -> return ""
         }
-        try {
-            if (date[0].toInt() in 1..daysInMonth(date[1].toInt(), date[2].toInt())
-                && date[2].toInt() > 0
-            ) return "${date[0].toInt()} $month ${date[2]}"
-        } catch (e: NumberFormatException) {
-            return ""
-        }
+        if (date[0].toInt() in 1..daysInMonth(date[1].toInt(), date[2].toInt())
+            && date[2].toInt() > 0
+        ) return "${date[0].toInt()} $month ${date[2]}"
+        return ""
     }
     return ""
 }
@@ -173,7 +168,18 @@ fun flattenPhoneNumber(phone: String): String = TODO()
  * Прочитать строку и вернуть максимальное присутствующее в ней число (717 в примере).
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
-fun bestLongJump(jumps: String): Int = TODO()
+fun bestLongJump(jumps: String): Int {
+    val str = jumps.split(" ")
+    val regex = """(\d+)""".toRegex()
+    var best = -1
+    for (element in str) {
+        if (element matches regex) {
+            if (element.toInt() > best)
+                best = element.toInt()
+        } else if (element != "-" && element != "%") return -1
+    }
+    return best
+}
 
 /**
  * Сложная (6 баллов)
@@ -186,7 +192,21 @@ fun bestLongJump(jumps: String): Int = TODO()
  * При нарушении формата входной строки, а также в случае отсутствия удачных попыток,
  * вернуть -1.
  */
-fun bestHighJump(jumps: String): Int = TODO()
+fun bestHighJump(jumps: String): Int {
+    val str = jumps.split(" ")
+    val regex = """(\d+)""".toRegex()
+    val regex2 = """([-+%]+)""".toRegex()
+    var best = -1
+    for (i in str.indices step 2) {
+        if (str[i] matches regex && i != str.lastIndex) {
+            if (str[i + 1] matches regex2) {
+                if ("+" in str[i + 1] && str[i].toInt() > best)
+                    best = str[i].toInt()
+            } else return -1
+        } else return -1
+    }
+    return best
+}
 
 /**
  * Сложная (6 баллов)
