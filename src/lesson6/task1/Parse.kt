@@ -227,7 +227,7 @@ fun plusMinus(expression: String): Int {
         result = list[0].toInt()
     } else throw IllegalArgumentException()
     for (i in 1 until list.size step 2) {
-        if (list[i + 1].matches(regex)) {
+        if (i != list.lastIndex && list[i + 1].matches(regex)) {
             when (list[i]) {
                 "+" -> result += list[i + 1].toInt()
                 "-" -> result -= list[i + 1].toInt()
