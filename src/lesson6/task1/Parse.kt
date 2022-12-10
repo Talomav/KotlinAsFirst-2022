@@ -200,10 +200,8 @@ fun bestHighJump(jumps: String): Int {
     val regex2 = """([-+%]+)""".toRegex()
     var best = -1
     for (i in str.indices step 2) {
-        if (str[i] matches regex && i != str.lastIndex && str[i + 1] matches regex2
-            && "+" in str[i + 1] && str[i].toInt() > best
-        ) {
-            best = str[i].toInt()
+        if (str[i] matches regex && i != str.lastIndex && str[i + 1] matches regex2) {
+            if (str[i].toInt() > best && "+" in str[i + 1]) best = str[i].toInt()
         } else return -1
     }
     return best
@@ -251,7 +249,7 @@ fun firstDuplicateIndex(str: String): Int {
     var result = 0
     val list = str.lowercase(Locale.getDefault()).split(" ")
     if (list.size <= 1) return -1
-    for (i in list.indices) {
+    for (i in 0..list.size - 2) {
         result += list[i].length + 1
         if (list[i] == list[i + 1]) return result - list[i].length - 1
     }
