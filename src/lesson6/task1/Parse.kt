@@ -3,6 +3,8 @@
 package lesson6.task1
 
 import lesson2.task2.daysInMonth
+import java.lang.IllegalArgumentException
+import java.util.*
 
 // Урок 6: разбор строк, исключения
 // Максимальное количество баллов = 13
@@ -198,11 +200,10 @@ fun bestHighJump(jumps: String): Int {
     val regex2 = """([-+%]+)""".toRegex()
     var best = -1
     for (i in str.indices step 2) {
-        if (str[i] matches regex && i != str.lastIndex) {
-            if (str[i + 1] matches regex2) {
-                if ("+" in str[i + 1] && str[i].toInt() > best)
-                    best = str[i].toInt()
-            } else return -1
+        if (str[i] matches regex && i != str.lastIndex && str[i + 1] matches regex2
+            && "+" in str[i + 1] && str[i].toInt() > best
+        ) {
+            best = str[i].toInt()
         } else return -1
     }
     return best
@@ -217,7 +218,25 @@ fun bestHighJump(jumps: String): Int {
  * Вернуть значение выражения (6 для примера).
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
-fun plusMinus(expression: String): Int = TODO()
+fun plusMinus(expression: String): Int {
+    val list = expression.split(" ")
+    val regex = """\d+""".toRegex()
+    var result: Int
+    if (list[0].matches(regex)) {
+        if (list.size == 1) return list[0].toInt()
+        result = list[0].toInt()
+    } else throw IllegalArgumentException()
+    for (i in 1 until list.size step 2) {
+        if (list[i + 1].matches(regex)) {
+            when (list[i]) {
+                "+" -> result += list[i + 1].toInt()
+                "-" -> result -= list[i + 1].toInt()
+                else -> throw IllegalArgumentException()
+            }
+        } else throw IllegalArgumentException()
+    }
+    return result
+}
 
 /**
  * Сложная (6 баллов)
@@ -228,7 +247,16 @@ fun plusMinus(expression: String): Int = TODO()
  * Вернуть индекс начала первого повторяющегося слова, или -1, если повторов нет.
  * Пример: "Он пошёл в в школу" => результат 9 (индекс первого 'в')
  */
-fun firstDuplicateIndex(str: String): Int = TODO()
+fun firstDuplicateIndex(str: String): Int {
+    var result = 0
+    val list = str.lowercase(Locale.getDefault()).split(" ")
+    if (list.size <= 1) return -1
+    for (i in list.indices) {
+        result += list[i].length + 1
+        if (list[i] == list[i + 1]) return result - list[i].length - 1
+    }
+    return -1
+}
 
 /**
  * Сложная (6 баллов)
@@ -241,7 +269,22 @@ fun firstDuplicateIndex(str: String): Int = TODO()
  * или пустую строку при нарушении формата строки.
  * Все цены должны быть больше нуля либо равны нулю.
  */
-fun mostExpensive(description: String): String = TODO()
+fun mostExpensive(description: String): String {
+    var result = ""
+    val regex = """[0-9.]+""".toRegex()
+    var maxPrice = -1.0
+    val list = description.split("; ")
+    for (i in list.indices) {
+        val pair = list[i].split(" ")
+        if (pair.size > 1 && pair[1].matches(regex) && pair[1].toDouble() >= 0) {
+            if (pair[1].toDouble() > maxPrice) {
+                maxPrice = pair[1].toDouble()
+                result = pair[0]
+            }
+        } else return ""
+    }
+    return result
+}
 
 /**
  * Сложная (6 баллов)

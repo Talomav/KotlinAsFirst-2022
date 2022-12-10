@@ -3,6 +3,7 @@
 package lesson7.task1
 
 import java.io.File
+import java.util.*
 
 // Урок 7: работа с файлами
 // Урок интегральный, поэтому его задачи имеют сильно увеличенную стоимость
@@ -63,7 +64,16 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
  * Подчёркивание в середине и/или в конце строк значения не имеет.
  */
 fun deleteMarked(inputName: String, outputName: String) {
-    TODO()
+    val text = File(inputName).readLines()
+    val writer = File(outputName).bufferedWriter()
+    for (str in text)
+        if (str.isNotEmpty()) {
+            if (str.first().toString() != "_") {
+                writer.write(str)
+                writer.newLine()
+            }
+        } else writer.newLine()
+    writer.close()
 }
 
 /**
@@ -75,7 +85,19 @@ fun deleteMarked(inputName: String, outputName: String) {
  * Регистр букв игнорировать, то есть буквы е и Е считать одинаковыми.
  *
  */
-fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> = TODO()
+fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
+    val result = mutableMapOf<String, Int>()
+    val text = File(inputName).readText().lowercase(Locale.getDefault())
+    for (element in substrings) {
+        result[element] = 0
+        for (i in text.indices) {
+            if (text.startsWith(element.lowercase(Locale.getDefault()), i)) {
+                result[element] = result[element]!! + 1
+            }
+        }
+    }
+    return result
+}
 
 
 /**

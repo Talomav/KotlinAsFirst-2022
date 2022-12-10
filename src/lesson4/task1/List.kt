@@ -175,13 +175,11 @@ fun times(a: List<Int>, b: List<Int>): Int {
  * Значение пустого многочлена равно 0 при любом x.
  */
 fun polynom(p: List<Int>, x: Int): Int {
-    if (p.isNotEmpty()) {
-        var amount = p[0]
-        for (i in 1 until p.size)
-            amount += p[i] * (x.toDouble().pow(i)).toInt()
-        return amount
-    }
-    return 0
+    if (p.isEmpty()) return 0
+    var amount = p[0]
+    for (i in 1 until p.size)
+        amount += p[i] * (x.toDouble().pow(i)).toInt()
+    return amount
 }
 
 /**
@@ -195,13 +193,11 @@ fun polynom(p: List<Int>, x: Int): Int {
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
 fun accumulate(list: MutableList<Int>): MutableList<Int> {
-    if (list.isNotEmpty()) {
-        var amount = 0
-        for (i in 0 until list.size) {
-            val number = list[i]
-            list[i] += amount
-            amount += number
-        }
+    var amount = 0
+    for (i in 0 until list.size) {
+        val number = list[i]
+        list[i] += amount
+        amount += number
     }
     return list
 }
@@ -221,7 +217,8 @@ fun factorize(n: Int): List<Int> {
         number /= 2
     }
     var divider = 3
-    while (number > 1 && divider < maxDivisor(n)) {
+    val max = maxDivisor(n)
+    while (number > 1 && divider < max) {
         if (number % divider == 0) {
             number /= divider
             result += divider

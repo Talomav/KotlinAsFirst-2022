@@ -184,8 +184,8 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
         } else Pair(nameA, numberA)
     }
     for ((nameB, numberB) in mapB) {
-        if (nameB !in mapA) {
-            result += Pair(nameB, numberB)
+        if (nameB !in result) {
+            result[nameB] = numberB
         }
     }
     return result
@@ -210,7 +210,7 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
         else map[key] = listOf(value)
     }
     for ((key, value) in map)
-        result += Pair(key, mean(value))
+        result[key] = mean(value)
     return result
 }
 
@@ -269,16 +269,12 @@ fun canBuildFrom(chars: List<Char>, word: String): Boolean = TODO()
  */
 fun extractRepeats(list: List<String>): Map<String, Int> {
     val result = mutableMapOf<String, Int>()
-    val set = mutableSetOf<String>()
     for (char in list) {
-        if (char in set) {
-            if (char in result)
-                result[char] = result[char]!! + 1
-            else result += Pair(char, 2)
-        }
-        set += char
+        if (char in result)
+            result[char] = result[char]!! + 1
+        else result[char] = 1
     }
-    return result
+    return result.filter { (_, value) -> value > 1 }
 }
 
 /**
@@ -363,9 +359,10 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
  */
 fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
     val result = mutableListOf<Int>()
+    val set = list.toSet()
     for (i in list.indices) {
-        if (number - list[i] in list &&
-            !(result.size == 1 && list[i] + list[result[0]] != number)
+        if (number - list[i] in set &&
+            (result.isEmpty() || list[i] + list[result[0]] == number)
         ) {
             result += i
         }
