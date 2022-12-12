@@ -218,7 +218,7 @@ fun factorize(n: Int): List<Int> {
     }
     var divider = 3
     val max = maxDivisor(n)
-    while (number > 1 && divider < max) {
+    while (number > 1 && divider <= max) {
         if (number % divider == 0) {
             number /= divider
             result += divider
