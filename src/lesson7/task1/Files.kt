@@ -162,8 +162,10 @@ fun centerFile(inputName: String, outputName: String) {
             val maxStr = text.max().length
             for (element in text) {
                 var str = element
-                if (str.isNotEmpty())
+                if (str.isNotEmpty()) {
                     while (str.first().toString() == " ") str = str.drop(1)
+                    while (str.last().toString() == " ") str = str.dropLast(1)
+                }
                 var i = 0
                 if ((maxStr % 2 == 0 && str.length % 2 != 0) ||
                     (maxStr % 2 != 0 && str.length % 2 == 0)
