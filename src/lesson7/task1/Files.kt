@@ -162,11 +162,13 @@ fun centerFile(inputName: String, outputName: String) {
             val text2 = mutableListOf<String>()
             for (i in text1.indices) {
                 var str = text1[i]
-                if (str.isNotEmpty())
+                if (str.isNotEmpty()) {
                     while (str.startsWith(" ")) str = str.drop(1)
+                    while (str.endsWith(" ")) str = str.dropLast(1)
+                }
                 text2 += str
             }
-            val maxStr = text1.max().length
+            val maxStr = text2.max().length
             for (element in text2) {
                 var str = element
                 var i = 0
