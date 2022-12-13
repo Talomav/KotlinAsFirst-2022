@@ -156,16 +156,21 @@ fun sibilants(inputName: String, outputName: String) {
  *
  */
 fun centerFile(inputName: String, outputName: String) {
-    val text = File(inputName).readLines()
+    val text1 = File(inputName).readLines()
     File(outputName).bufferedWriter().use {
-        if (text.isNotEmpty()) {
-            val maxStr = text.max().length
-            for (element in text) {
-                var str = element
+        if (text1.isNotEmpty()) {
+            val text2 = mutableListOf<String>()
+            for (i in text1.indices) {
+                var str = text1[i]
                 if (str.isNotEmpty()) {
                     while (str.first().toString() == " ") str = str.drop(1)
                     while (str.last().toString() == " ") str = str.dropLast(1)
                 }
+                text2 += str
+            }
+            val maxStr = text2.max().length
+            for (element in text2) {
+                var str = element
                 var i = 0
                 if ((maxStr % 2 == 0 && str.length % 2 != 0) ||
                     (maxStr % 2 != 0 && str.length % 2 == 0)
