@@ -176,7 +176,6 @@ fun centerFile(inputName: String, outputName: String) {
                 if ((maxLength % 2 == 0 && str.length % 2 != 0) ||
                     (maxLength % 2 != 0 && str.length % 2 == 0)
                 ) i = 1
-                println(str.length)
                 while (str.length + i < maxLength) {
                     str = " $str"
                     i += 1
