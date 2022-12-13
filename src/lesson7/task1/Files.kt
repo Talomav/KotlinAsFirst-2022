@@ -119,20 +119,22 @@ fun sibilants(inputName: String, outputName: String) {
     val vowel1 = "ыяю"
     val vowel2 = "иау"
     File(outputName).bufferedWriter().use {
-        var char = ""
-        for (i in 0..text.length - 2) {
-            if (char.isNotEmpty()) {
-                char = ""
-                continue
+        if (text.isNotEmpty()) {
+            var char = ""
+            for (i in 0..text.length - 2) {
+                if (char.isNotEmpty()) {
+                    char = ""
+                    continue
+                }
+                if (text[i].lowercaseChar() in consonant && text[i + 1].lowercaseChar() in vowel1) {
+                    char = vowel2[vowel1.indexOf(text[i + 1].lowercaseChar())].toString()
+                    if (text[i + 1].isUpperCase()) char = char.uppercase(Locale.getDefault())
+                }
+                it.write(text[i].toString())
+                if (char.isNotEmpty()) it.write(char)
             }
-            if (text[i].lowercaseChar() in consonant && text[i + 1].lowercaseChar() in vowel1) {
-                char = vowel2[vowel1.indexOf(text[i + 1].lowercaseChar())].toString()
-                if (text[i + 1].isUpperCase()) char = char.uppercase(Locale.getDefault())
-            }
-            it.write(text[i].toString())
-            if (char.isNotEmpty()) it.write(char)
+            it.write(text.last().toString())
         }
-        it.write(text.last().toString())
     }
 }
 
@@ -156,21 +158,23 @@ fun sibilants(inputName: String, outputName: String) {
 fun centerFile(inputName: String, outputName: String) {
     val text = File(inputName).readLines()
     val maxStr = text.max().length
-    File(outputName).bufferedWriter().use{
-        for (element in text) {
-            var str = element
-            if (str.isNotEmpty())
-                while (str.first().toString() == " ") str = str.drop(1)
-            var i = 0
-            if ((maxStr % 2 == 0 && str.length % 2 != 0) ||
-                (maxStr % 2 != 0 && str.length % 2 == 0)
-            ) i = 1
-            while (str.length + i < maxStr) {
-                str = " $str"
-                i += 1
+    File(outputName).bufferedWriter().use {
+        if (text.isNotEmpty()) {
+            for (element in text) {
+                var str = element
+                if (str.isNotEmpty())
+                    while (str.first().toString() == " ") str = str.drop(1)
+                var i = 0
+                if ((maxStr % 2 == 0 && str.length % 2 != 0) ||
+                    (maxStr % 2 != 0 && str.length % 2 == 0)
+                ) i = 1
+                while (str.length + i < maxStr) {
+                    str = " $str"
+                    i += 1
+                }
+                it.write(str)
+                it.newLine()
             }
-            it.write(str)
-            it.newLine()
         }
     }
 }
