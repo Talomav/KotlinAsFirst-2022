@@ -160,6 +160,7 @@ fun centerFile(inputName: String, outputName: String) {
     File(outputName).bufferedWriter().use {
         if (text1.isNotEmpty()) {
             val text2 = mutableListOf<String>()
+            var maxLength = -1
             for (i in text1.indices) {
                 var str = text1[i]
                 if (str.isNotEmpty()) {
@@ -167,15 +168,16 @@ fun centerFile(inputName: String, outputName: String) {
                     while (str.endsWith(" ")) str = str.dropLast(1)
                 }
                 text2 += str
+                if (str.length > maxLength) maxLength = str.length
             }
-            val maxStr = text2.max().length
             for (element in text2) {
                 var str = element
                 var i = 0
-                if ((maxStr % 2 == 0 && str.length % 2 != 0) ||
-                    (maxStr % 2 != 0 && str.length % 2 == 0)
+                if ((maxLength % 2 == 0 && str.length % 2 != 0) ||
+                    (maxLength % 2 != 0 && str.length % 2 == 0)
                 ) i = 1
-                while (str.length + i < maxStr) {
+                println(str.length)
+                while (str.length + i < maxLength) {
                     str = " $str"
                     i += 1
                 }
