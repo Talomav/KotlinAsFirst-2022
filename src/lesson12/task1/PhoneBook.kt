@@ -2,6 +2,8 @@
 
 package lesson12.task1
 
+import java.lang.IllegalArgumentException
+
 /**
  * Класс "Телефонная книга".
  *
@@ -24,7 +26,14 @@ class PhoneBook {
      * и false, если человек с таким именем уже был в телефонной книге
      * (во втором случае телефонная книга не должна меняться).
      */
-    fun addHuman(name: String): Boolean = TODO()
+    private val bookMap = mutableMapOf<String, MutableSet<String>>()
+    fun addHuman(name: String): Boolean {
+        if (name !in bookMap.keys) {
+            bookMap[name] = mutableSetOf()
+            return true
+        }
+        return false
+    }
 
     /**
      * Убрать человека.
@@ -32,7 +41,13 @@ class PhoneBook {
      * и false, если человек с таким именем отсутствовал в телефонной книге
      * (во втором случае телефонная книга не должна меняться).
      */
-    fun removeHuman(name: String): Boolean = TODO()
+    fun removeHuman(name: String): Boolean {
+        if (name in bookMap.keys) {
+            bookMap.remove(name)
+            return true
+        }
+        return false
+    }
 
     /**
      * Добавить номер телефона.
@@ -41,7 +56,25 @@ class PhoneBook {
      * либо у него уже был такой номер телефона,
      * либо такой номер телефона зарегистрирован за другим человеком.
      */
-    fun addPhone(name: String, phone: String): Boolean = TODO()
+    private fun checkPhone(phone: String): Boolean {
+        val regex = """[^+*#\d]""".toRegex()
+        if (phone.contains(regex))
+            return false
+        return true
+    }
+
+    fun addPhone(name: String, phone: String): Boolean {
+        if (name !in bookMap.keys || !checkPhone(phone))
+            return false
+        if (checkPhone(phone)) {
+            for ((key, value) in bookMap) {
+                if (phone in value)
+                    return false
+            }
+        } else throw IllegalArgumentException()
+        bookMap[name]?.add(phone)
+        return true
+    }
 
     /**
      * Убрать номер телефона.
@@ -49,24 +82,49 @@ class PhoneBook {
      * и false, если человек с таким именем отсутствовал в телефонной книге
      * либо у него не было такого номера телефона.
      */
-    fun removePhone(name: String, phone: String): Boolean = TODO()
+    fun removePhone(name: String, phone: String): Boolean {
+        if (name in bookMap.keys && bookMap.isNotEmpty() && phone in bookMap[name]!!) {
+            bookMap[name]?.remove(phone)
+            return true
+        }
+        return false
+    }
 
     /**
      * Вернуть все номера телефона заданного человека.
      * Если этого человека нет в книге, вернуть пустой список
      */
-    fun phones(name: String): Set<String> = TODO()
+    fun phones(name: String): Set<String> {
+        if (name !in bookMap.keys || bookMap[name].isNullOrEmpty())
+            return setOf()
+        return bookMap[name]!!
+    }
 
     /**
      * Вернуть имя человека по заданному номеру телефона.
      * Если такого номера нет в книге, вернуть null.
      */
-    fun humanByPhone(phone: String): String? = TODO()
+    fun humanByPhone(phone: String): String? {
+        for ((key, value) in bookMap) {
+            if (phone in value)
+                return key
+        }
+        return null
+    }
 
     /**
      * Две телефонные книги равны, если в них хранится одинаковый набор людей,
      * и каждому человеку соответствует одинаковый набор телефонов.
      * Порядок людей / порядок телефонов в книге не должен иметь значения.
      */
-    override fun equals(other: Any?): Boolean = TODO()
+    override fun equals(other: Any?): Boolean {
+        if (other !is PhoneBook || this.bookMap.keys != other.bookMap.keys)
+            return false
+        for ((key, value) in this.bookMap) {
+            if (this.bookMap[key] != other.bookMap[key]) return false
+        }
+        return true
+    }
+
+    override fun hashCode(): Int = bookMap.hashCode()
 }
