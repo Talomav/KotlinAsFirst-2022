@@ -4,7 +4,6 @@ package lesson11.task1
 
 import java.math.RoundingMode
 import kotlin.math.max
-import kotlin.math.pow
 
 /**
  * Класс "вещественное число с фиксированной точкой"
@@ -97,21 +96,14 @@ class FixedPointNumber : Comparable<FixedPointNumber> {
     /**
      * Умножение
      */
-    private fun rounding(s: String, p: Int): String {
-        var number = s.toBigDecimal().setScale(p, RoundingMode.HALF_UP).toString()
-        var precision = p
-        while (number.last().code >= 53 && precision > 0) {
-            number = number.toBigDecimal().setScale(precision, RoundingMode.HALF_UP).toString()
-            precision -= 1
-        }
-        return number
-    }
 
     operator fun times(other: FixedPointNumber): FixedPointNumber {
         val maxPrecision = max(this.precision, other.precision)
         val result = (this.toDouble() * other.toDouble()).toString()
         if (result.split(".")[1].length > maxPrecision)
-            return FixedPointNumber(rounding(result, maxPrecision))
+            return FixedPointNumber(
+                result.toBigDecimal().setScale(precision, RoundingMode.HALF_UP).toString()
+            )
         return FixedPointNumber(result)
     }
 
@@ -122,7 +114,9 @@ class FixedPointNumber : Comparable<FixedPointNumber> {
         val maxPrecision = max(this.precision, other.precision)
         val result = (this.toDouble() / other.toDouble()).toString()
         if (result.split(".")[1].length > maxPrecision)
-            return FixedPointNumber(rounding(result, maxPrecision))
+            return FixedPointNumber(
+                result.toBigDecimal().setScale(precision, RoundingMode.HALF_UP).toString()
+            )
         return FixedPointNumber(result)
     }
 
