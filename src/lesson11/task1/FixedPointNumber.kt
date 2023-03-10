@@ -58,9 +58,9 @@ class FixedPointNumber : Comparable<FixedPointNumber> {
      * Конструктор из вещественного числа с заданной точностью
      */
     constructor(d: Double, p: Int) {
-        if (d.toString().split(".")[1].dropLastWhile { it.toString() == "0" }.length != p)
+        if (p < 0)
             throw NumberFormatException()
-        number = d.toString()
+        number = d.toBigDecimal().setScale(p, RoundingMode.HALF_UP).toString()
     }
 
     /**
@@ -78,8 +78,9 @@ class FixedPointNumber : Comparable<FixedPointNumber> {
      * Лишние знаки отрбрасываются, число округляется по правилам арифметики.
      */
     operator fun plus(other: FixedPointNumber): FixedPointNumber {
-        val result = (this.toDouble() + other.toDouble()).toString()
-        return FixedPointNumber(result)
+        val p = maxOf(precision, other.precision)
+        val result = this.toDouble() + other.toDouble()
+        return FixedPointNumber(result, p)
     }
 
     /**
@@ -91,39 +92,29 @@ class FixedPointNumber : Comparable<FixedPointNumber> {
     /**
      * Вычитание
      */
-    operator fun minus(other: FixedPointNumber): FixedPointNumber =
-        FixedPointNumber((this.toDouble() - other.toDouble()).toString())
+    operator fun minus(other: FixedPointNumber): FixedPointNumber {
+        val p = maxOf(precision, other.precision)
+        val result = this.toDouble() - other.toDouble()
+        return FixedPointNumber(result, p)
+    }
 
     /**
      * Умножение
      */
-    private fun rounding(s: String, p: Int): String {
-        var number = s.toBigDecimal().setScale(p, RoundingMode.HALF_UP).toString()
-        var precision = p
-        while (number.last().code >= 53 && precision > 0) {
-            number = number.toBigDecimal().setScale(precision, RoundingMode.HALF_UP).toString()
-            precision -= 1
-        }
-        return number
-    }
 
     operator fun times(other: FixedPointNumber): FixedPointNumber {
-        val maxPrecision = max(this.precision, other.precision)
-        val result = (this.toDouble() * other.toDouble()).toString()
-        if (result.split(".")[1].length > maxPrecision)
-            return FixedPointNumber(rounding(result, maxPrecision))
-        return FixedPointNumber(result)
+        val p = max(this.precision, other.precision)
+        val result = this.toDouble() * other.toDouble()
+        return FixedPointNumber(result, p)
     }
 
     /**
      * Деление
      */
     operator fun div(other: FixedPointNumber): FixedPointNumber {
-        val maxPrecision = max(this.precision, other.precision)
-        val result = (this.toDouble() / other.toDouble()).toString()
-        if (result.split(".")[1].length > maxPrecision)
-            return FixedPointNumber(rounding(result, maxPrecision))
-        return FixedPointNumber(result)
+        val p = max(this.precision, other.precision)
+        val result = this.toDouble() / other.toDouble()
+        return FixedPointNumber(result, p)
     }
 
     /**
