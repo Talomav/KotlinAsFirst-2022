@@ -57,14 +57,14 @@ class PhoneBook {
      * либо такой номер телефона зарегистрирован за другим человеком.
      */
     private fun checkPhone(phone: String): Boolean {
-        val regex = """[^+*#\d]""".toRegex()
+        val regex = """[^-+*#\d]""".toRegex()
         if (phone.contains(regex))
             return false
         return true
     }
 
     fun addPhone(name: String, phone: String): Boolean {
-        if (name !in bookMap.keys || !checkPhone(phone))
+        if (name !in bookMap.keys)
             return false
         if (checkPhone(phone)) {
             for ((key, value) in bookMap) {

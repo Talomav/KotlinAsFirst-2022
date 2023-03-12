@@ -2,6 +2,11 @@
 
 package lesson11.task1
 
+import kotlinx.html.P
+import java.lang.IllegalArgumentException
+import kotlin.math.abs
+import kotlin.math.pow
+
 /**
  * Класс "полином с вещественными коэффициентами".
  *
@@ -24,12 +29,25 @@ class Polynom(vararg coeffs: Double) {
     /**
      * Геттер: вернуть значение коэффициента при x^i
      */
-    fun coeff(i: Int): Double = TODO()
+    private val coeffs = if (coeffs.isEmpty()) {
+        doubleArrayOf(0.0)
+    } else {
+        coeffs.dropWhile { it == 0.0 }.toDoubleArray()
+    }
+
+
+    fun coeff(i: Int): Double = coeffs[coeffs.size - 1 - i]
 
     /**
      * Расчёт значения при заданном x
      */
-    fun getValue(x: Double): Double = TODO()
+    fun getValue(x: Double): Double {
+        var result = 0.0
+        for (i in coeffs.indices) {
+            result += coeffs[i] * x.pow(coeffs.size - i - 1)
+        }
+        return result
+    }
 
     /**
      * Степень (максимальная степень x при ненулевом слагаемом, например 2 для x^2+x+1).
@@ -38,27 +56,74 @@ class Polynom(vararg coeffs: Double) {
      * Слагаемые с нулевыми коэффициентами игнорировать, т.е.
      * степень 0x^2+0x+2 также равна 0.
      */
-    fun degree(): Int = TODO()
+    fun degree(): Int {
+        for (i in coeffs.indices) {
+            if (abs(coeffs[i]) > 0.0) return coeffs.size - i - 1
+        }
+        return 0
+    }
 
     /**
      * Сложение
      */
-    operator fun plus(other: Polynom): Polynom = TODO()
+    operator fun plus(other: Polynom): Polynom {
+        var thisCoeffs = this.coeffs
+        var otherCoeffs = other.coeffs
+        val minSize = minOf(coeffs.size, other.coeffs.size)
+        val max = maxOf(coeffs.size, other.coeffs.size)
+        while (thisCoeffs.size != otherCoeffs.size) {
+            if (coeffs.size == minSize) thisCoeffs = doubleArrayOf(0.0) + thisCoeffs
+            else otherCoeffs = doubleArrayOf(0.0) + otherCoeffs
+        }
+        var result = doubleArrayOf()
+        for (i in 0 until max) {
+            result += thisCoeffs[i] + otherCoeffs[i]
+        }
+        return Polynom(*result)
+    }
 
     /**
      * Смена знака (при всех слагаемых)
      */
-    operator fun unaryMinus(): Polynom = TODO()
+    operator fun unaryMinus(): Polynom {
+        var result = doubleArrayOf()
+        for (i in coeffs.indices) {
+            result += -coeffs[i]
+        }
+        return Polynom(*result)
+    }
 
     /**
      * Вычитание
      */
-    operator fun minus(other: Polynom): Polynom = TODO()
+    operator fun minus(other: Polynom): Polynom {
+        var thisCoeffs = this.coeffs
+        var otherCoeffs = other.coeffs
+        val minSize = minOf(coeffs.size, other.coeffs.size)
+        val max = maxOf(coeffs.size, other.coeffs.size)
+        while (thisCoeffs.size != otherCoeffs.size) {
+            if (coeffs.size == minSize) thisCoeffs = doubleArrayOf(0.0) + thisCoeffs
+            else otherCoeffs = doubleArrayOf(0.0) + otherCoeffs
+        }
+        var result = doubleArrayOf()
+        for (i in 0 until max) {
+            result += thisCoeffs[i] - otherCoeffs[i]
+        }
+        return Polynom(*result)
+    }
 
     /**
      * Умножение
      */
-    operator fun times(other: Polynom): Polynom = TODO()
+    operator fun times(other: Polynom): Polynom {
+        val result = DoubleArray(this.degree() + other.degree() + 1)
+        for (i in coeffs.indices) {
+            for (j in other.coeffs.indices) {
+                result[i + j] += coeffs[i] * other.coeffs[j]
+            }
+        }
+        return Polynom(*result)
+    }
 
     /**
      * Деление
@@ -68,20 +133,46 @@ class Polynom(vararg coeffs: Double) {
      *
      * Если A / B = C и A % B = D, то A = B * C + D и степень D меньше степени B
      */
-    operator fun div(other: Polynom): Polynom = TODO()
+
+    operator fun div(other: Polynom): Polynom {
+        var divisible = this
+        var divisor = other
+        if (divisor.degree() == 0 && divisor.coeffs.last() == 0.0)
+            throw IllegalArgumentException()
+        val result = DoubleArray(this.degree() - other.degree() + 1)
+        if (divisor.degree() == 0) {
+            for (i in divisible.coeffs.indices)
+                result[i] = divisible.coeffs[i] / divisor.coeffs.last()
+            return Polynom(*result)
+        }
+        while (other.degree() <= divisible.degree()) {
+            val number = DoubleArray(divisible.degree() - divisor.degree() + 1)
+            number[0] = divisible.coeffs[0] / divisor.coeffs[0]
+            divisor = divisor.times(Polynom(*number))
+            result[result.size - (divisible.degree() - other.degree()) - 1] = number[0]
+            divisible = divisible.minus(divisor)
+            divisor = other
+        }
+        return Polynom(*result)
+    }
 
     /**
      * Взятие остатка
      */
-    operator fun rem(other: Polynom): Polynom = TODO()
+    operator fun rem(other: Polynom): Polynom =
+        this.minus(this.div(other).times(other))
 
     /**
      * Сравнение на равенство
      */
-    override fun equals(other: Any?): Boolean = TODO()
+    override fun equals(other: Any?): Boolean {
+        if (other !is Polynom) return false
+        if (this === other) return true
+        return this.coeffs.contentEquals(other.coeffs)
+    }
 
     /**
      * Получение хеш-кода
      */
-    override fun hashCode(): Int = TODO()
+    override fun hashCode(): Int = this.coeffs.contentHashCode()
 }
